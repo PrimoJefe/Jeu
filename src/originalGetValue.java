@@ -1,4 +1,4 @@
-public class originalGetValue {
+/*public class originalGetValue {
     int GetValue(board, ColorMoving){
         for (byte x= 0; x < 8; x++){
             for (byte y = 0; y< 8; y++){
@@ -69,4 +69,4 @@ public class originalGetValue {
 
         return Value;
     }
-}
+}*/

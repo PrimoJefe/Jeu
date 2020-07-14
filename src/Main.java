@@ -1,23 +1,28 @@
+import java.util.ArrayList;
+
 public class Main {
 
 
     public static void main(String[] args) {
-	    System.out.println(2);
-        int[][] board = new int[8][8];
-        String[] boardValues = {"2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","2","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","4","4","4","4","4","4","4","4","4","4","4","4","4","4","4","4"};
-        int x=0,y=0;
-        for(int i=0; i<boardValues.length;i++){
+        Jeu jeu = new Jeu("12222222222222222000000000000000000000000000000004444444444444444");
+        System.out.println("Ma couleur : " + jeu.getMaCouleur());
+        jeu.afficherPlateau(jeu.getPlateau());
+        System.out.print("\n");
 
-            board[x][y] = Integer.parseInt(boardValues[i]);
-            x++;
-            if(x == 8){
-                x = 0;
-                y++;
+        ArrayList<Integer[][]> liste = new ArrayList<Integer[][]>();
+
+        for(Pion pion : jeu.getMesPions()) {
+            if(pion.getPosition().x == 6 && pion.getPosition().y == 0) {
+                liste = generateurMouvement(jeu.getPlateau(), pion.getPosition().x, pion.getPosition().y, pion);
             }
         }
-        System.out.println("done");
 
-        GetValue(board,"Black");
+        for(int i = 0; i < liste.size(); i ++) {
+            jeu.afficherPlateau(liste.get(i));
+            System.out.print("\n");
+        }
+
+        GetValue(jeu.getPlateau(),"Black");
 
     }
 
@@ -25,7 +30,7 @@ public class Main {
     // [ligne][column]
     // [0][0] = [8][A]
 
-    private static int GetValue(int[][]board, String joueur){
+    private static int GetValue(Integer[][]board, String joueur){
         int victoire = 100;
         boolean victoireNoir = false;
         boolean victoireRouge = false;
@@ -64,7 +69,7 @@ public class Main {
         return value;
     }
 
-    private static int GetPieceValue(int[][]board, int row,int column,int team)
+    private static int GetPieceValue(Integer[][]board, int row,int column,int team)
     {
         int value = 0;
 
@@ -72,16 +77,18 @@ public class Main {
 
         if (team == 2){ //NOIR MIN
             // add to the value the protected value
-            if (row>0){
+            if (row > 0 && column > 0 && column < 7){
                 if(board[row-1][column-1]==team){value -= 5;}
                 if(board[row-1][column+1]==team){value -= 5;}
             }
             // evaluate attack
-            if(board[row+1][column-1]!=team){value += 5;}
-            if(board[row+1][column+1]!=team){value += 5;}
+            if (row < 7 && column > 0 && column < 7){
+                if(board[row+1][column-1]!=team){value += 5;}
+                if(board[row+1][column+1]!=team){value += 5;}
+            }
 
             // evaluate block
-            if(row<=5){
+            if(row <= 5 && column > 0 && column < 7){
                 if(board[row+2][column-1]!=team){value -= 5;}
                 if(board[row+2][column]!=team){value -= 5;}
                 if(board[row+2][column-1]!=team){value -= 5;}
@@ -97,16 +104,19 @@ public class Main {
 
         else{ //rouge MAX
             // add to the value the protected value
-            if (row<7){
+            if (row < 7 && column > 0 && column < 7){
                 if(board[row+1][column-1]==team){value += 5;}
                 if(board[row+1][column+1]==team){value += 5;}
             }
             // evaluate attack
-            if(board[row-1][column-1]!=team){value -= 5;}
-            if(board[row-1][column+1]!=team){value -= 5;}
+            if (row > 0 && column > 0 && column < 7){
+                if(board[row-1][column-1]!=team){value -= 5;}
+                if(board[row-1][column+1]!=team){value -= 5;}
+            }
+
 
             // evaluate block
-            if(row>=2){
+            if(row >= 2 && column > 0 && column < 7){
                 if(board[row-2][column-1]!=team){value += 5;}
                 if(board[row-2][column]!=team){value += 5;}
                 if(board[row-2][column-1]!=team){value += 5;}
@@ -123,48 +133,58 @@ public class Main {
         return value;
     }
 
-    public static int[][] generateurMouvement(int[][] board, int row, int col){
+    public static ArrayList<Integer[][]> generateurMouvement(Integer[][] plateau, int ligne, int colonne, Pion pion) {
+        Integer[][] plateauPossible = copierTableau(plateau);
 
-        int player = board[row][col];
-        int[][] possibleMoves = new int[1][3];
+        int avancement = ligne + pion.getDirection();
 
-        if(player == 2){
+        ArrayList<Integer[][]> mouvementsPossibles = new ArrayList<Integer[][]>();
 
-            for (int j = col - 1, c = 0; j <= col + 1; j++, c++) {
-                if (board[row-1][j] == 2) {
-                    //These are your teammates, don't eat, can't jump over either
-                    possibleMoves[0][c] = -1;
-                } else if(board[row-1][j] == 4){
-                    //Red is in front of you -> EAT
-                    if(c != 1){
-                        //Move current position to new position
-                        possibleMoves[0][c] = board[row-1][j];
-                    }
-                } else if(board[row-1][j] == 0){
-                    //Empty space, move down
-                    possibleMoves[0][c] = board[row-1][j];
-                }
+        if (plateau[avancement][colonne] == 0) {
+            plateauPossible[avancement][colonne] = plateau[ligne][colonne];
+            plateauPossible[ligne][colonne] = 0;
+            mouvementsPossibles.add(plateauPossible);
+            plateauPossible = copierTableau(plateau);
+        }
+        if(colonne != 0) {
+            if(plateau[avancement][colonne - 1] == 0) {
+                plateauPossible[avancement][colonne - 1] = plateau[ligne][colonne];
+                plateauPossible[ligne][colonne] = 0;
+                mouvementsPossibles.add(plateauPossible);
+                plateauPossible = copierTableau(plateau);
             }
-
-        } else if(player == 4){
-
-            for (int j = col - 1, c = 0; j <= col + 1; j++, c++) {
-                if (board[row+1][j] == 2) {
-                    //These are your teammates, don't eat, can't jump over either
-                    possibleMoves[0][c] = -1;
-                } else if(board[row+1][j] == 4){
-                    //Red is in front of you -> EAT
-                    if(c != 1){
-                        //Move current position to new position
-                        possibleMoves[0][c] = board[row+1][j];
-                    }
-                } else if(board[row-1][j] == 0){
-                    //Empty space, move down
-                    possibleMoves[0][c] = board[row+1][j];
-                }
+            else if (plateau[avancement][colonne - 1] != pion.getCouleur()) {
+                plateauPossible[avancement][colonne - 1] = plateau[ligne][colonne];
+                plateauPossible[ligne][colonne] = 0;
+                mouvementsPossibles.add(plateauPossible);
+                plateauPossible = copierTableau(plateau);
             }
         }
-        return possibleMoves;
+        if(colonne != plateau.length - 1) {
+            if(plateau[avancement][colonne + 1] == 0) {
+                plateauPossible[avancement][colonne + 1] = plateau[ligne][colonne];
+                plateauPossible[ligne][colonne] = 0;
+                mouvementsPossibles.add(plateauPossible);
+                plateauPossible = copierTableau(plateau);
+            }
+            else if (plateau[avancement][colonne + 1] != pion.getCouleur()) {
+                plateauPossible[avancement][colonne + 1] = plateau[ligne][colonne];
+                plateauPossible[ligne][colonne] = 0;
+                mouvementsPossibles.add(plateauPossible);
+                plateauPossible = copierTableau(plateau);
+            }
+        }
+        return mouvementsPossibles;
+    }
+
+    public static Integer[][] copierTableau(Integer[][] plateau) {
+        Integer[][] copie = new Integer[plateau.length][plateau.length];
+        for (int i = 0; i < plateau.length; i++) {
+            for(int j = 0; j < plateau.length; j++) {
+                copie[i][j] = plateau[i][j];
+            }
+        }
+        return copie;
     }
 
 }
