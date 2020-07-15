@@ -4,7 +4,7 @@ public class Main {
 
 
     public static void main(String[] args) {
-        Jeu jeu = new Jeu("12222222222222222000000000000000000000000000000004444444444444444");
+        Jeu jeu = new Jeu("22222222222222222000000000000000000000000000000004444444444444444");
         System.out.println("Ma couleur : " + jeu.getMaCouleur());
         jeu.afficherPlateau(jeu.getPlateau());
         System.out.print("\n");
@@ -16,16 +16,16 @@ public class Main {
         Minmax minmax = new Minmax(racine);
         //double valeurNoeudAJouer = minmax.minMax(racine,2,true);
         //Noeud nextMove = minmax.trouverBestEnfant(racine, 2, true);
-        String nextMove = minmax.findPositionChange(racine,2,true);
+        String nextMove = minmax.findPositionChange(racine,2,false);
+        System.out.print("ALLLALALAL : " + nextMove);
+       // liste = Jeu.generateurMouvement(racine.getBoard(), pions);
 
-        liste = Jeu.generateurMouvement(racine.getBoard(), pions);
-
-        for(int i = 0; i < liste.size(); i ++) {
+        /*for(int i = 0; i < liste.size(); i ++) {
             jeu.afficherPlateau(liste.get(i));
             System.out.print("\n");
-        }
+        }*/
 
-        GetValue(jeu.getPlateau(),"Black");
+        //GetValue(jeu.getPlateau(),"Black");
 
     }
 

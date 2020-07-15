@@ -10,19 +10,81 @@ public class Jeu {
     private static ArrayList<Pion> pionsRouges;
     private static ArrayList<Pion> pionsNoirs;
 
+    public Jeu() {};
+//    public Jeu(Integer[][] plateau, boolean maCouleur) {
+//        /*for(int i = 0; i < 8; i++) {
+//            for(int j = 0; j < 8; j++) {
+//                this.plateau[j][i] = plateau[i][j];
+//            }
+//        }*/
+//        this.plateau = plateau;
+//        this.maCouleur = maCouleur;
+//        if(maCouleur) {
+//            this.couleurAdverse = false;
+//        }
+//        else {
+//            this.couleurAdverse = true;
+//        }
+//
+//        this.pionsNoirs = new ArrayList<Pion>();
+//        this.pionsRouges = new ArrayList<Pion>();
+//
+//       /* if (Integer.parseInt(String.valueOf(configuration.charAt(0))) == 1) {
+//            this.maCouleur = true;
+//            this.couleurAdverse = false;
+//        }
+//        else {
+//            this.maCouleur = false;
+//            this.couleurAdverse = true;
+//        }*/
+//
+//        int i = 1;
+//        int direction = 1;
+//        for (int x = 0; x < this.plateau.length; x++) {
+//            for (int y = 0; y < this.plateau.length; y++) {
+//                Point position = new Point(x,y);
+//                int valeur = plateau[x][y];
+//                if (x > (plateau.length-1)/2) {
+//                    direction = -1;
+//                }
+//
+//                if (valeur == 4) {
+//                    Pion pion = new Pion(true, position, direction);
+//                    pionsRouges.add(pion);
+//                }
+//                else if (valeur == 2) {
+//                    Pion pion = new Pion(false, position, direction);
+//                    pionsNoirs.add(pion);
+//                }
+//                i++;
+//            }
+//        }
+//    }
     public Jeu(String configuration) {
+        /*for(int i = 0; i < 8; i++) {
+            for(int j = 0; j < 8; j++) {
+                this.plateau[j][i] = plateau[i][j];
+            }
+        }*/
         this.plateau = new Integer[8][8];
-        this.pionsNoirs = new ArrayList<Pion>();
-        this.pionsRouges = new ArrayList<Pion>();
-
-       /* if (Integer.parseInt(String.valueOf(configuration.charAt(0))) == 1) {
-            this.maCouleur = true;
+        if(maCouleur) {
             this.couleurAdverse = false;
         }
         else {
+            this.couleurAdverse = true;
+        }
+
+        this.pionsNoirs = new ArrayList<Pion>();
+        this.pionsRouges = new ArrayList<Pion>();
+
+       if (Integer.parseInt(String.valueOf(configuration.charAt(0))) == 1) {
+            this.maCouleur = true;
+            this.couleurAdverse = false;
+        }
+       else {
             this.maCouleur = false;
             this.couleurAdverse = true;
-        }*/
+       }
 
         int i = 1;
         int direction = 1;
@@ -31,7 +93,6 @@ public class Jeu {
                 int valeur = Integer.parseInt(String.valueOf(configuration.charAt(i)));
                 this.plateau[x][y] = valeur;
                 Point position = new Point(x,y);
-
                 if (x > (plateau.length-1)/2) {
                     direction = -1;
                 }
@@ -53,6 +114,7 @@ public class Jeu {
         return this.plateau;
     }
     public boolean getMaCouleur() { return this.maCouleur; }
+    public boolean getCouleurAdverse() { return this.couleurAdverse; }
 
     public static ArrayList<Pion> getPionsRouges() {
         return pionsRouges;
@@ -236,5 +298,153 @@ public class Jeu {
             }
         }
         return copie;
+    }
+
+    public void modifierPlateau(String s, boolean joueur){
+        int ancienY = -1;
+        int ancienX = -1;
+        int nouveauY = -1;
+        int nouveauX = -1;
+
+        switch (s.charAt(0)){
+            case 'A':
+                ancienY = 0;
+                break;
+            case 'B':
+                ancienY = 1;
+                break;
+            case 'C':
+                ancienY = 2;
+                break;
+            case 'D':
+                ancienY = 3;
+                break;
+            case 'E':
+                ancienY = 4;
+                break;
+            case 'F':
+                ancienY = 5;
+                break;
+            case 'G':
+                ancienY = 6;
+                break;
+            case 'H':
+                ancienY = 7;
+                break;
+        }
+
+        switch (s.charAt(5)){
+            case 'A':
+                nouveauY = 0;
+                break;
+            case 'B':
+                nouveauY = 1;
+                break;
+            case 'C':
+                nouveauY = 2;
+                break;
+            case 'D':
+                nouveauY = 3;
+                break;
+            case 'E':
+                nouveauY = 4;
+                break;
+            case 'F':
+                nouveauY = 5;
+                break;
+            case 'G':
+                nouveauY = 6;
+                break;
+            case 'H':
+                nouveauY = 7;
+                break;
+        }
+        switch(Integer.parseInt(String.valueOf(s.charAt(1)))) {
+            case 1 :
+                ancienX = 7;
+                break;
+            case 2 :
+                ancienX = 6;
+                break;
+            case 3 :
+                ancienX = 5;
+                break;
+            case 4 :
+                ancienX = 4;
+                break;
+            case 5 :
+                ancienX = 3;
+                break;
+            case 6 :
+                ancienX = 2;
+                break;
+            case 7 :
+                ancienX = 1;
+                break;
+            case 8 :
+                ancienX = 0;
+                break;
+        }
+
+        switch(Integer.parseInt(String.valueOf(s.charAt(6)))) {
+            case 1 :
+                nouveauX = 7;
+                break;
+            case 2 :
+                nouveauX = 6;
+                break;
+            case 3 :
+                nouveauX = 5;
+                break;
+            case 4 :
+                nouveauX = 4;
+                break;
+            case 5 :
+                nouveauX = 3;
+                break;
+            case 6 :
+                nouveauX = 2;
+                break;
+            case 7 :
+                nouveauX = 1;
+                break;
+            case 8 :
+                nouveauX = 0;
+                break;
+        }
+
+        if(joueur) {
+            for(Pion pion : pionsRouges){
+                if(pion.getPosition().x == ancienX && pion.getPosition().y == ancienY) {
+                    this.plateau[ancienX][ancienY] = 0;
+                    this.plateau[nouveauX][nouveauY] = 4;
+                    pion.setPosition(nouveauX, nouveauY);
+
+                }
+            }
+            for(Pion pion : pionsNoirs) {
+                if(pion.getPosition().x == nouveauX && pion.getPosition().y == nouveauY) {
+                    this.pionsNoirs.remove(pion);
+
+                }
+            }
+        }
+        else {
+            for(Pion pion : pionsNoirs){
+                if(pion.getPosition().x == ancienX && pion.getPosition().y == ancienY) {
+                    this.plateau[ancienX][ancienY] = 0;
+                    this.plateau[nouveauX][nouveauY] = 2;
+                    pion.setPosition(nouveauX, nouveauY);
+
+                }
+            }
+            for(Pion pion : pionsRouges) {
+                if(pion.getPosition().x == nouveauX && pion.getPosition().y == nouveauY) {
+                    this.pionsRouges.remove(pion);
+
+                }
+            }
+        }
+
     }
 }
