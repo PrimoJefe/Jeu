@@ -7,13 +7,13 @@ public class Noeud {
     private int depth;
     private String position;
     private boolean estJoueurMax;
-    private double score;
+    private int score;
     private List<Noeud> enfants;
 
 
-    public Noeud(Integer[][] board, boolean isMaxPlayer) {
+    public Noeud(Integer[][] board, int score) {
         this.board = board;
-        this.estJoueurMax = isMaxPlayer;
+        this.score = score;
         enfants = new ArrayList<>();
     }
 
@@ -25,7 +25,7 @@ public class Noeud {
         return this.board;
     }
 
-    public double getScore(){
+    public int getScore(){
         return this.score;
     }
 
@@ -49,7 +49,7 @@ public class Noeud {
         this.enfants.add(enfant);
     }
 
-    public void setScore(double score){
+    public void setScore(int score){
         this.score = score;
     }
 

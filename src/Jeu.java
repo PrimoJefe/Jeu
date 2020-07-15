@@ -11,62 +11,14 @@ public class Jeu {
     private static ArrayList<Pion> pionsNoirs;
 
     public Jeu() {};
-//    public Jeu(Integer[][] plateau, boolean maCouleur) {
-//        /*for(int i = 0; i < 8; i++) {
-//            for(int j = 0; j < 8; j++) {
-//                this.plateau[j][i] = plateau[i][j];
-//            }
-//        }*/
-//        this.plateau = plateau;
-//        this.maCouleur = maCouleur;
-//        if(maCouleur) {
-//            this.couleurAdverse = false;
-//        }
-//        else {
-//            this.couleurAdverse = true;
-//        }
-//
-//        this.pionsNoirs = new ArrayList<Pion>();
-//        this.pionsRouges = new ArrayList<Pion>();
-//
-//       /* if (Integer.parseInt(String.valueOf(configuration.charAt(0))) == 1) {
-//            this.maCouleur = true;
-//            this.couleurAdverse = false;
-//        }
-//        else {
-//            this.maCouleur = false;
-//            this.couleurAdverse = true;
-//        }*/
-//
-//        int i = 1;
-//        int direction = 1;
-//        for (int x = 0; x < this.plateau.length; x++) {
-//            for (int y = 0; y < this.plateau.length; y++) {
-//                Point position = new Point(x,y);
-//                int valeur = plateau[x][y];
-//                if (x > (plateau.length-1)/2) {
-//                    direction = -1;
-//                }
-//
-//                if (valeur == 4) {
-//                    Pion pion = new Pion(true, position, direction);
-//                    pionsRouges.add(pion);
-//                }
-//                else if (valeur == 2) {
-//                    Pion pion = new Pion(false, position, direction);
-//                    pionsNoirs.add(pion);
-//                }
-//                i++;
-//            }
-//        }
-//    }
-    public Jeu(String configuration) {
+    public Jeu(Integer[][] plateau, boolean maCouleur) {
         /*for(int i = 0; i < 8; i++) {
             for(int j = 0; j < 8; j++) {
                 this.plateau[j][i] = plateau[i][j];
             }
         }*/
-        this.plateau = new Integer[8][8];
+        this.plateau = plateau;
+        this.maCouleur = maCouleur;
         if(maCouleur) {
             this.couleurAdverse = false;
         }
@@ -77,22 +29,21 @@ public class Jeu {
         this.pionsNoirs = new ArrayList<Pion>();
         this.pionsRouges = new ArrayList<Pion>();
 
-       if (Integer.parseInt(String.valueOf(configuration.charAt(0))) == 1) {
+       /* if (Integer.parseInt(String.valueOf(configuration.charAt(0))) == 1) {
             this.maCouleur = true;
             this.couleurAdverse = false;
         }
-       else {
+        else {
             this.maCouleur = false;
             this.couleurAdverse = true;
-       }
+        }*/
 
         int i = 1;
         int direction = 1;
         for (int x = 0; x < this.plateau.length; x++) {
             for (int y = 0; y < this.plateau.length; y++) {
-                int valeur = Integer.parseInt(String.valueOf(configuration.charAt(i)));
-                this.plateau[x][y] = valeur;
                 Point position = new Point(x,y);
+                int valeur = plateau[x][y];
                 if (x > (plateau.length-1)/2) {
                     direction = -1;
                 }
@@ -109,6 +60,55 @@ public class Jeu {
             }
         }
     }
+//    public Jeu(String configuration) {
+//        /*for(int i = 0; i < 8; i++) {
+//            for(int j = 0; j < 8; j++) {
+//                this.plateau[j][i] = plateau[i][j];
+//            }
+//        }*/
+//        this.plateau = new Integer[8][8];
+//        if(maCouleur) {
+//            this.couleurAdverse = false;
+//        }
+//        else {
+//            this.couleurAdverse = true;
+//        }
+//
+//        this.pionsNoirs = new ArrayList<Pion>();
+//        this.pionsRouges = new ArrayList<Pion>();
+//
+//       if (Integer.parseInt(String.valueOf(configuration.charAt(0))) == 1) {
+//            this.maCouleur = true;
+//            this.couleurAdverse = false;
+//        }
+//       else {
+//            this.maCouleur = false;
+//            this.couleurAdverse = true;
+//       }
+//
+//        int i = 1;
+//        int direction = 1;
+//        for (int x = 0; x < this.plateau.length; x++) {
+//            for (int y = 0; y < this.plateau.length; y++) {
+//                int valeur = Integer.parseInt(String.valueOf(configuration.charAt(i)));
+//                this.plateau[x][y] = valeur;
+//                Point position = new Point(x,y);
+//                if (x > (plateau.length-1)/2) {
+//                    direction = -1;
+//                }
+//
+//                if (valeur == 4) {
+//                    Pion pion = new Pion(true, position, direction);
+//                    pionsRouges.add(pion);
+//                }
+//                else if (valeur == 2) {
+//                    Pion pion = new Pion(false, position, direction);
+//                    pionsNoirs.add(pion);
+//                }
+//                i++;
+//            }
+//        }
+//    }
 
     public Integer[][] getPlateau() {
         return this.plateau;
