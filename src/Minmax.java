@@ -1,41 +1,31 @@
-import com.sun.tools.corba.se.idl.constExpr.Negative;
-
-import java.util.ArrayList;
 import java.util.List;
 
 public class Minmax {
 
-    Arbre arbre;
+    public double minmax(Noeud boardInit, int depth, boolean joueurMax){
 
-    public void construireArbre(Integer[][] board){
-        arbre = new Arbre();
-        Noeud racine = new Noeud(board, true);
-        arbre.setRacine(racine);
-        construireArbre(racine);
-    }
+        List<Integer> listPossibleMoves = Breakthrough.generateurMouvement(boardInit.getBoard(), joueurMax);
 
-    private void construireArbre(Noeud racine){
-
-        //Need to get all possible moves from current board
-        //Iterate through all moves and add as child in tree
-            //If not leaf, continue descending tree
-
-        //List<Integer> listPossibleMoves = Breakthrough.generateurMouvement(Client.);
-    }
-
-    public int minmax(Integer[][] board, int depth, boolean joueurMax){
         if(depth == 0){
-            return Breakthrough.getValue(board);
+            return Breakthrough.getValue(boardInit.getBoard());
         }
         if(joueurMax){
             double maxEval = Double.NEGATIVE_INFINITY;
-            for(int i=depth; i<=0; i--){
-
+            for(int i=0; i<listPossibleMoves.size(); i++){
+                double eval = minmax(boardInit, depth-1, false);
+                maxEval = Math.max(maxEval,eval);
             }
+            return maxEval;
         }else{
             double minEval = Double.POSITIVE_INFINITY;
+            for(int i=0; i<listPossibleMoves.size(); i++){
+                double eval = minmax(boardInit, depth-1, true);
+                minEval = Math.min(minEval,eval);
+            }
+            return minEval;
         }
-        return 0;
     }
+
+
 
 }

@@ -5,7 +5,7 @@ public class Noeud {
 
     private Integer[][] board;
     private boolean estJoueurMax;
-    private int score;
+    private double score;
     private List<Noeud> enfants;
 
 
@@ -19,7 +19,11 @@ public class Noeud {
         return this.board;
     }
 
-    public boolean getJoeurMax(){
+    public double getScore(){
+        return this.score;
+    }
+
+    public boolean getJoueurMax(){
         return this.estJoueurMax;
     }
 
