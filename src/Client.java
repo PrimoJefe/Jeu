@@ -71,7 +71,6 @@ class Client {
                     }
                 }
 
-
                 // Le serveur demande le prochain coup
                 // Le message contient aussi le dernier coup joue.
                 if(cmd == '3'){
@@ -83,9 +82,9 @@ class Client {
 
                     String s = new String(aBuffer);
                     System.out.println("Dernier coup :"+ s);
-                    System.out.println("Entrez votre coup : ");
-                    String move = null;
-                    move = console.readLine();
+                    //System.out.println("Entrez votre coup : ");
+                    String move = "D7 - C6";
+                    //move = console.readLine();
                     output.write(move.getBytes(),0,move.length());
                     output.flush();
 
@@ -118,8 +117,8 @@ class Client {
             System.out.println(e);
         }
 
-
-
     }
+
+
 
 }
