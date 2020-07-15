@@ -11,15 +11,22 @@ public class Main {
 
         ArrayList<Integer[][]> liste = new ArrayList<Integer[][]>();
         ArrayList<Pion> pions = jeu.getPionsNoirs();
+        Breakthrough breakthrough = new Breakthrough();
 
-        liste = Breakthrough.generateurMouvement(jeu.getPlateau(), pions);
+        liste = breakthrough.generateurMouvement(jeu.getPlateau(), pions);
 
         for(int i = 0; i < liste.size(); i ++) {
             jeu.afficherPlateau(liste.get(i));
             System.out.print("\n");
         }
+        Noeud noeudBase = new Noeud(jeu.getPlateau(), -1000000000);
+        Noeud noeud = breakthrough.minimax(jeu, noeudBase, 2, -1000000000, 1000000000, true);
+        System.out.println("\n---------------------------------------- " + noeud.getScore());
+        jeu.afficherPlateau(noeud.getBoard());
 
         GetValue(jeu.getPlateau(),"Black");
+       // int test= breakthrough.minimax(jeu, jeu.getPlateau(), 2, -1000000000, 1000000000, true);
+        //System.out.print("\n---------------------------------------- " + test);
 
     }
 

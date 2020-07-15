@@ -1,8 +1,131 @@
 import java.util.ArrayList;
+import java.util.Random;
 
 public class Breakthrough {
 
-    public static int getValue(Integer[][] board){
+    public Breakthrough() {};
+
+    public Noeud minimax(Jeu jeu, Noeud noeud, int profondeur, int alpha, int beta, boolean joueurRouge) {
+        ArrayList<Integer[][]> enfants = new ArrayList<Integer[][]>();
+        int eval;
+        int minEval;
+        int maxEval;
+        Integer[][] minBoard = new Integer[8][8];
+        Integer[][] maxBoard = new Integer[8][8];
+
+        if(joueurRouge) {
+            enfants = generateurMouvement(noeud.getBoard(), jeu.getPionsRouges());
+        }
+        else {
+            enfants = generateurMouvement(noeud.getBoard(), jeu.getPionsNoirs());
+        }
+
+        if (profondeur == 0) {
+            Random r = new Random();
+            int low = 0;
+            int high = 100;
+            int result = r.nextInt(high-low) + low;
+            System.out.println("allo : " + result);
+            jeu.afficherPlateau(noeud.getBoard());
+            System.out.println("\n");
+            noeud.setScore(result);
+            return noeud;
+        }
+
+        if (joueurRouge) {
+            maxEval = -1000000000;
+            for (Integer[][] enfant : enfants) {
+                Noeud noeudEnfant = new Noeud(enfant, maxEval);
+                Noeud noeudMax = minimax(jeu, noeudEnfant, profondeur - 1, alpha, beta, false);
+                eval = noeudMax.getScore();
+                if (eval > maxEval) {
+                    maxBoard = noeudMax.getBoard();
+                }
+                maxEval = Math.max(maxEval, eval);
+
+                alpha = Math.max(alpha, noeudMax.getScore());
+
+                if (beta <= alpha) {
+                    break;
+                }
+            }
+            return (new Noeud(maxBoard, maxEval));
+        }
+
+        else {
+            minEval = 1000000000;
+            for (Integer[][] enfant : enfants) {
+                Noeud noeudEnfant = new Noeud(enfant, minEval);
+                Noeud noeudMin = minimax(jeu, noeudEnfant, profondeur - 1, alpha, beta, true);
+                eval = noeudMin.getScore();
+                if (eval < minEval) {
+                    minBoard = noeudMin.getBoard();
+                }
+                minEval = Math.min(minEval, eval);
+
+                alpha = Math.max(alpha, noeudMin.getScore());
+
+                if (beta <= alpha) {
+                    break;
+                }
+            }
+            return (new Noeud(minBoard, minEval));
+        }
+    }
+
+//    public int minimax(Jeu jeu, Integer[][] plateau, int profondeur, int alpha, int beta, boolean joueurRouge) {
+//        ArrayList<Integer[][]> enfants = new ArrayList<Integer[][]>();
+//        int eval;
+//        int minEval;
+//        int maxEval;
+//        if(joueurRouge) {
+//            enfants = generateurMouvement(plateau, jeu.getPionsRouges());
+//        }
+//        else {
+//            enfants = generateurMouvement(plateau, jeu.getPionsNoirs());
+//        }
+//
+//        if (profondeur == 0) {
+//            Random r = new Random();
+//            int low = 0;
+//            int high = 100;
+//            int result = r.nextInt(high-low) + low;
+//            System.out.println("allo : " + result);
+//            return result;
+//        }
+//
+//        if (joueurRouge) {
+//            maxEval = -1000000000;
+//            for (Integer[][] enfant : enfants) {
+//                eval = minimax(jeu, enfant, profondeur - 1, alpha, beta, false);
+//                maxEval = Math.max(maxEval, eval);
+//
+//                alpha = Math.max(alpha, eval);
+//
+//                if (beta <= alpha) {
+//                    break;
+//                }
+//            }
+//            return maxEval;
+//        }
+//
+//        else {
+//            minEval = 1000000000;
+//            for (Integer[][] enfant : enfants) {
+//                eval = minimax(jeu, enfant, profondeur - 1, alpha, beta, true);
+//                minEval = Math.min(minEval, eval);
+//
+//                alpha = Math.min(alpha, eval);
+//
+//                if (beta <= alpha) {
+//                    break;
+//                }
+//            }
+//            return minEval;
+//        }
+//    }
+
+    public int getValue(Integer[][] board){
         int victoire = 100;
         boolean victoireNoir = false;
         boolean victoireRouge = false;
@@ -41,7 +164,7 @@ public class Breakthrough {
         return value;
     }
 
-    public static int getPieceValue(Integer[][] board, int row, int column, int team)
+    public int getPieceValue(Integer[][] board, int row, int column, int team)
     {
         int value = 0;
 
@@ -102,7 +225,7 @@ public class Breakthrough {
         return value;
     }
 
-    public static ArrayList<Integer[][]> generateurMouvement(Integer[][] plateau, ArrayList<Pion> pions) {
+    public ArrayList<Integer[][]> generateurMouvement(Integer[][] plateau, ArrayList<Pion> pions) {
         Integer[][] plateauPossible = copierTableau(plateau);
         ArrayList<Integer[][]> mouvementsPossibles = new ArrayList<Integer[][]>();
 
