@@ -10,6 +10,8 @@ class Client {
         BufferedOutputStream output;
         Integer[][] board = new Integer[8][8];
 
+        Jeu jeu;
+
         try {
             MyClient = new Socket("localhost", 8888);
 
@@ -29,6 +31,7 @@ class Client {
                     //System.out.println("size " + size);
                     input.read(aBuffer,0,size);
                     String s = new String(aBuffer).trim();
+                    jeu = new Jeu(s);
                     System.out.println(s);
                     String[] boardValues;
                     boardValues = s.split(" ");
@@ -57,6 +60,7 @@ class Client {
                     //System.out.println("size " + size);
                     input.read(aBuffer,0,size);
                     String s = new String(aBuffer).trim();
+                    jeu = new Jeu(s);
                     System.out.println(s);
                     String[] boardValues;
                     boardValues = s.split(" ");
@@ -79,17 +83,18 @@ class Client {
                     int size = input.available();
                     System.out.println("size :" + size);
                     input.read(aBuffer,0,size);
-
                     String s = new String(aBuffer);
+                    jeu = new Jeu(s);
                     System.out.println("Dernier coup :"+ s);
                     //System.out.println("Entrez votre coup : ");
 
-                    Minmax minmax = new Minmax();
+                    Noeud racine = new Noeud(jeu.getPlateau(), true);
+                    Minmax minmax = new Minmax(racine);
+                    String nextMove = minmax.findPositionChange(racine,2,true);
 
-
-                    String move = "D7-C6";
+                    //String move = "D7-C6";
                     //move = console.readLine();
-                    output.write(move.getBytes(),0,move.length());
+                    output.write(nextMove.getBytes(),0,nextMove.length());
                     output.flush();
 
                 }

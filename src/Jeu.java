@@ -4,17 +4,6 @@ import java.util.ArrayList;
 
 public class Jeu {
 
-    //private static final int NOIR = 2;
-    //private static final int ROUGE = 4;
-    private static final int A = 0;
-    private static final int B = 1;
-    private static final int C = 2;
-    private static final int D = 3;
-    private static final int E = 4;
-    private static final int F = 5;
-    private static final int G = 6;
-    private static final int H = 7;
-
     private Integer[][] plateau;
     private boolean maCouleur;
     private boolean couleurAdverse;
@@ -26,14 +15,14 @@ public class Jeu {
         this.pionsNoirs = new ArrayList<Pion>();
         this.pionsRouges = new ArrayList<Pion>();
 
-        if (Integer.parseInt(String.valueOf(configuration.charAt(0))) == 1) {
+       /* if (Integer.parseInt(String.valueOf(configuration.charAt(0))) == 1) {
             this.maCouleur = true;
             this.couleurAdverse = false;
         }
         else {
             this.maCouleur = false;
             this.couleurAdverse = true;
-        }
+        }*/
 
         int i = 1;
         int direction = 1;
@@ -248,6 +237,4 @@ public class Jeu {
         }
         return copie;
     }
-
-
 }

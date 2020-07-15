@@ -13,8 +13,10 @@ public class Main {
         ArrayList<Pion> pions = jeu.getPionsNoirs();
 
         Noeud racine = new Noeud(jeu.getPlateau(), true);
-        Minmax minmax = new Minmax();
-        Noeud noeudAJouer = minmax.minMax(racine,2,true);
+        Minmax minmax = new Minmax(racine);
+        //double valeurNoeudAJouer = minmax.minMax(racine,2,true);
+        //Noeud nextMove = minmax.trouverBestEnfant(racine, 2, true);
+        String nextMove = minmax.findPositionChange(racine,2,true);
 
         liste = Jeu.generateurMouvement(racine.getBoard(), pions);
 
