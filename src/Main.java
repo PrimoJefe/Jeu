@@ -4,7 +4,7 @@ public class Main {
 
 
     public static void main(String[] args) {
-        Jeu jeu = new Jeu("12222222222222222000000000000000000000000000000004444444444444444");
+        Jeu jeu = new Jeu("22222222222222222000000000000000000000000000000004444444444444444");
         System.out.println("Ma couleur : " + jeu.getMaCouleur());
         jeu.afficherPlateau(jeu.getPlateau());
         System.out.print("\n");
@@ -20,7 +20,7 @@ public class Main {
             System.out.print("\n");
         }
         Noeud noeudBase = new Noeud(jeu.getPlateau(), -1000000000);
-        Noeud noeud = breakthrough.minimax(jeu, noeudBase, 2, -1000000000, 1000000000, true);
+        Noeud noeud = breakthrough.minimax(jeu, noeudBase, 2, -1000000000, 1000000000, false);
         System.out.println("\n---------------------------------------- " + noeud.getScore());
         jeu.afficherPlateau(noeud.getBoard());
 

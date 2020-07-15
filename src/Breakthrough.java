@@ -12,6 +12,7 @@ public class Breakthrough {
         int maxEval;
         Integer[][] minBoard = new Integer[8][8];
         Integer[][] maxBoard = new Integer[8][8];
+        Noeud noeudEnfant = new Noeud(noeud.getBoard(), noeud.getScore());
 
         if(joueurRouge) {
             enfants = generateurMouvement(noeud.getBoard(), jeu.getPionsRouges());
@@ -35,7 +36,7 @@ public class Breakthrough {
         if (joueurRouge) {
             maxEval = -1000000000;
             for (Integer[][] enfant : enfants) {
-                Noeud noeudEnfant = new Noeud(enfant, maxEval);
+                noeudEnfant = new Noeud(enfant, maxEval);
                 Noeud noeudMax = minimax(jeu, noeudEnfant, profondeur - 1, alpha, beta, false);
                 eval = noeudMax.getScore();
                 if (eval > maxEval) {
@@ -49,13 +50,13 @@ public class Breakthrough {
                     break;
                 }
             }
-            return (new Noeud(maxBoard, maxEval));
+            return (new Noeud(noeudEnfant.getBoard(), maxEval));
         }
 
         else {
             minEval = 1000000000;
             for (Integer[][] enfant : enfants) {
-                Noeud noeudEnfant = new Noeud(enfant, minEval);
+                noeudEnfant = new Noeud(enfant, minEval);
                 Noeud noeudMin = minimax(jeu, noeudEnfant, profondeur - 1, alpha, beta, true);
                 eval = noeudMin.getScore();
                 if (eval < minEval) {
@@ -69,7 +70,7 @@ public class Breakthrough {
                     break;
                 }
             }
-            return (new Noeud(minBoard, minEval));
+            return (new Noeud(noeudEnfant.getBoard(), minEval));
         }
     }
 
