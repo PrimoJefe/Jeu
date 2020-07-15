@@ -9,10 +9,14 @@ public class Main {
         jeu.afficherPlateau(jeu.getPlateau());
         System.out.print("\n");
 
-        ArrayList<Integer[][]> liste = new ArrayList<Integer[][]>();
+        ArrayList<Integer[][]> liste = new ArrayList<>();
         ArrayList<Pion> pions = jeu.getPionsNoirs();
 
-        liste = Breakthrough.generateurMouvement(jeu.getPlateau(), pions);
+        Noeud racine = new Noeud(jeu.getPlateau(), true);
+        Minmax minmax = new Minmax();
+        Noeud noeudAJouer = minmax.minMax(racine,2,true);
+
+        liste = Jeu.generateurMouvement(racine.getBoard(), pions);
 
         for(int i = 0; i < liste.size(); i ++) {
             jeu.afficherPlateau(liste.get(i));

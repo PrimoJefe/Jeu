@@ -4,15 +4,21 @@ import java.util.List;
 public class Noeud {
 
     private Integer[][] board;
+    private int depth;
+    private String position;
     private boolean estJoueurMax;
     private double score;
     private List<Noeud> enfants;
 
 
-    public Noeud(Integer[][] position, boolean estJoueurMax){
-        this.board = position;
-        this.estJoueurMax = estJoueurMax;
+    public Noeud(Integer[][] board, boolean isMaxPlayer) {
+        this.board = board;
+        this.estJoueurMax = isMaxPlayer;
         enfants = new ArrayList<>();
+    }
+
+    boolean estJoueurMax() {
+        return this.estJoueurMax;
     }
 
     public Integer[][] getBoard(){
@@ -31,8 +37,28 @@ public class Noeud {
         return enfants;
     }
 
+    public String getPosition(){
+        return this.position;
+    }
+
+    public int getDepth(){
+        return this.depth;
+    }
+
     public void ajouterEnfant(Noeud enfant){
         this.enfants.add(enfant);
+    }
+
+    public void setScore(double score){
+        this.score = score;
+    }
+
+    public void setDepth(int depth){
+        this.depth = depth;
+    }
+
+    public void setPosition(String position){
+        this.position = position;
     }
 
 }

@@ -8,7 +8,7 @@ class Client {
         Socket MyClient;
         BufferedInputStream input;
         BufferedOutputStream output;
-        int[][] board = new int[8][8];
+        Integer[][] board = new Integer[8][8];
 
         try {
             MyClient = new Socket("localhost", 8888);
@@ -83,7 +83,11 @@ class Client {
                     String s = new String(aBuffer);
                     System.out.println("Dernier coup :"+ s);
                     //System.out.println("Entrez votre coup : ");
-                    String move = "D7 - C6";
+
+                    Minmax minmax = new Minmax();
+
+
+                    String move = "D7-C6";
                     //move = console.readLine();
                     output.write(move.getBytes(),0,move.length());
                     output.flush();
