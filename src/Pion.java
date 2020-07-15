@@ -2,20 +2,20 @@ import java.awt.*;
 
 public class Pion {
 
-    private static final int NOIR = 2;
-    private static final int ROUGE = 4;
+    //private static final int NOIR = 2;
+    //private static final int ROUGE = 4;
 
-    private int couleur;
+    private boolean couleur;
     private Point position;
     private int direction;
 
-    public Pion (int couleur, Point position, int direction) {
+    public Pion (boolean couleur, Point position, int direction) {
         this.couleur = couleur;
         this.position = position;
         this.direction = direction;
     }
 
-    public int getCouleur() {
+    public boolean getCouleur() {
         return this.couleur;
     }
 

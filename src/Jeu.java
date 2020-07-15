@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 public class Jeu {
 
-    private static final int NOIR = 2;
-    private static final int ROUGE = 4;
+    //private static final int NOIR = 2;
+    //private static final int ROUGE = 4;
     private static final int A = 1;
     private static final int B = 2;
     private static final int C = 3;
@@ -16,20 +16,23 @@ public class Jeu {
     private static final int H = 8;
 
     private Integer[][] plateau;
-    private int maCouleur;
-    private ArrayList<Pion> mesPions;
-    private ArrayList<Pion> pionsEnnemis;
+    private boolean maCouleur;
+    private boolean couleurAdverse;
+    private ArrayList<Pion> pionsRouges;
+    private ArrayList<Pion> pionsNoirs;
 
     public Jeu(String configuration) {
         this.plateau = new Integer[8][8];
-        this.mesPions = new ArrayList<Pion>();
-        this.pionsEnnemis = new ArrayList<Pion>();
+        this.pionsNoirs = new ArrayList<Pion>();
+        this.pionsRouges = new ArrayList<Pion>();
 
         if (Integer.parseInt(String.valueOf(configuration.charAt(0))) == 1) {
-            this.maCouleur = ROUGE;
+            this.maCouleur = true;
+            this.couleurAdverse = false;
         }
         else {
-            this.maCouleur = NOIR;
+            this.maCouleur = false;
+            this.couleurAdverse = true;
         }
 
         int i = 1;
@@ -44,13 +47,13 @@ public class Jeu {
                     direction = -1;
                 }
 
-                if (valeur == maCouleur) {
-                    Pion pion = new Pion(maCouleur, position, direction);
-                    this.mesPions.add(pion);
+                if (valeur == 4) {
+                    Pion pion = new Pion(true, position, direction);
+                    pionsRouges.add(pion);
                 }
-                else if (valeur != 0) {
-                    Pion pion = new Pion(valeur, position, direction);
-                    this.pionsEnnemis.add(pion);
+                else if (valeur == 2) {
+                    Pion pion = new Pion(false, position, direction);
+                    pionsNoirs.add(pion);
                 }
                 i++;
             }
@@ -60,10 +63,14 @@ public class Jeu {
     public Integer[][] getPlateau() {
         return this.plateau;
     }
-    public int getMaCouleur() { return this.maCouleur; }
+    public boolean getMaCouleur() { return this.maCouleur; }
 
-    public ArrayList<Pion> getMesPions() {
-        return this.mesPions;
+    public ArrayList<Pion> getPionsRouges() {
+        return this.pionsRouges;
+    }
+
+    public ArrayList<Pion> getPionsNoirs() {
+        return this.pionsNoirs;
     }
 
     public void setPlateau(Integer[][] nouvelEtat) {
