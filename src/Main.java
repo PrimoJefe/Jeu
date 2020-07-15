@@ -12,20 +12,22 @@ public class Main {
         ArrayList<Integer[][]> liste = new ArrayList<>();
         ArrayList<Pion> pions = jeu.getPionsNoirs();
 
-        Noeud racine = new Noeud(jeu.getPlateau(), true);
+        Noeud racine = new Noeud(jeu.getPlateau(), 0);
         Minmax minmax = new Minmax(racine);
         //double valeurNoeudAJouer = minmax.minMax(racine,2,true);
         //Noeud nextMove = minmax.trouverBestEnfant(racine, 2, true);
-        String nextMove = minmax.findPositionChange(racine,2,true);
-
-        liste = Jeu.generateurMouvement(racine.getBoard(), pions);
+        String nextMove = minmax.findPositionChange(jeu, racine,3,jeu.getMaCouleur());
+        System.out.println("-----------------------------------------");
+        jeu.afficherPlateau(minmax.minimax(jeu, racine, 2, -1000000000, 10000000, jeu.getMaCouleur()).getBoard());
+        System.out.print("NEXT MOVE : " + nextMove);
+        /*liste = Jeu.generateurMouvement(racine.getBoard(), pions);
 
         for(int i = 0; i < liste.size(); i ++) {
             jeu.afficherPlateau(liste.get(i));
             System.out.print("\n");
         }
 
-        GetValue(jeu.getPlateau(),"Black");
+        GetValue(jeu.getPlateau(),"Black");*/
 
     }
 
