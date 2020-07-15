@@ -102,45 +102,56 @@ public class Breakthrough {
         return value;
     }
 
-    public static ArrayList<Integer[][]> generateurMouvement(Integer[][] plateau, int ligne, int colonne, Pion pion) {
+    public static ArrayList<Integer[][]> generateurMouvement(Integer[][] plateau, ArrayList<Pion> pions) {
         Integer[][] plateauPossible = copierTableau(plateau);
-
-        int avancement = ligne + pion.getDirection();
-
         ArrayList<Integer[][]> mouvementsPossibles = new ArrayList<Integer[][]>();
 
-        if (plateau[avancement][colonne] == 0) {
-            plateauPossible[avancement][colonne] = plateau[ligne][colonne];
-            plateauPossible[ligne][colonne] = 0;
-            mouvementsPossibles.add(plateauPossible);
-            plateauPossible = copierTableau(plateau);
-        }
-        if(colonne != 0) {
-            if(plateau[avancement][colonne - 1] == 0) {
-                plateauPossible[avancement][colonne - 1] = plateau[ligne][colonne];
+        for (Pion pion : pions) {
+            int ligne = pion.getPosition().x;
+            int colonne = pion.getPosition().y;
+            int avancement = ligne + pion.getDirection();
+            int couleur;
+
+            if (pion.getCouleur() == true) {
+                couleur = 4;
+            }
+            else {
+                couleur = 2;
+            }
+
+            if (plateau[avancement][colonne] == 0) {
+                plateauPossible[avancement][colonne] = plateau[ligne][colonne];
                 plateauPossible[ligne][colonne] = 0;
                 mouvementsPossibles.add(plateauPossible);
                 plateauPossible = copierTableau(plateau);
             }
-            else if (plateau[avancement][colonne - 1] != pion.getCouleur()) {
-                plateauPossible[avancement][colonne - 1] = plateau[ligne][colonne];
-                plateauPossible[ligne][colonne] = 0;
-                mouvementsPossibles.add(plateauPossible);
-                plateauPossible = copierTableau(plateau);
+            if(colonne != 0) {
+                if(plateau[avancement][colonne - 1] == 0) {
+                    plateauPossible[avancement][colonne - 1] = plateau[ligne][colonne];
+                    plateauPossible[ligne][colonne] = 0;
+                    mouvementsPossibles.add(plateauPossible);
+                    plateauPossible = copierTableau(plateau);
+                }
+                else if (plateau[avancement][colonne - 1] != couleur) {
+                    plateauPossible[avancement][colonne - 1] = plateau[ligne][colonne];
+                    plateauPossible[ligne][colonne] = 0;
+                    mouvementsPossibles.add(plateauPossible);
+                    plateauPossible = copierTableau(plateau);
+                }
             }
-        }
-        if(colonne != plateau.length - 1) {
-            if(plateau[avancement][colonne + 1] == 0) {
-                plateauPossible[avancement][colonne + 1] = plateau[ligne][colonne];
-                plateauPossible[ligne][colonne] = 0;
-                mouvementsPossibles.add(plateauPossible);
-                plateauPossible = copierTableau(plateau);
-            }
-            else if (plateau[avancement][colonne + 1] != pion.getCouleur()) {
-                plateauPossible[avancement][colonne + 1] = plateau[ligne][colonne];
-                plateauPossible[ligne][colonne] = 0;
-                mouvementsPossibles.add(plateauPossible);
-                plateauPossible = copierTableau(plateau);
+            if(colonne != plateau.length - 1) {
+                if(plateau[avancement][colonne + 1] == 0) {
+                    plateauPossible[avancement][colonne + 1] = plateau[ligne][colonne];
+                    plateauPossible[ligne][colonne] = 0;
+                    mouvementsPossibles.add(plateauPossible);
+                    plateauPossible = copierTableau(plateau);
+                }
+                else if (plateau[avancement][colonne + 1] != couleur) {
+                    plateauPossible[avancement][colonne + 1] = plateau[ligne][colonne];
+                    plateauPossible[ligne][colonne] = 0;
+                    mouvementsPossibles.add(plateauPossible);
+                    plateauPossible = copierTableau(plateau);
+                }
             }
         }
         return mouvementsPossibles;

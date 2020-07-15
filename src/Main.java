@@ -10,12 +10,9 @@ public class Main {
         System.out.print("\n");
 
         ArrayList<Integer[][]> liste = new ArrayList<Integer[][]>();
+        ArrayList<Pion> pions = jeu.getPionsNoirs();
 
-        for(Pion pion : jeu.getMesPions()) {
-            if(pion.getPosition().x == 6 && pion.getPosition().y == 0) {
-                liste = generateurMouvement(jeu.getPlateau(), pion.getPosition().x, pion.getPosition().y, pion);
-            }
-        }
+        liste = Breakthrough.generateurMouvement(jeu.getPlateau(), pions);
 
         for(int i = 0; i < liste.size(); i ++) {
             jeu.afficherPlateau(liste.get(i));
@@ -132,59 +129,4 @@ public class Main {
 
         return value;
     }
-
-    public static ArrayList<Integer[][]> generateurMouvement(Integer[][] plateau, int ligne, int colonne, Pion pion) {
-        Integer[][] plateauPossible = copierTableau(plateau);
-
-        int avancement = ligne + pion.getDirection();
-
-        ArrayList<Integer[][]> mouvementsPossibles = new ArrayList<Integer[][]>();
-
-        if (plateau[avancement][colonne] == 0) {
-            plateauPossible[avancement][colonne] = plateau[ligne][colonne];
-            plateauPossible[ligne][colonne] = 0;
-            mouvementsPossibles.add(plateauPossible);
-            plateauPossible = copierTableau(plateau);
-        }
-        if(colonne != 0) {
-            if(plateau[avancement][colonne - 1] == 0) {
-                plateauPossible[avancement][colonne - 1] = plateau[ligne][colonne];
-                plateauPossible[ligne][colonne] = 0;
-                mouvementsPossibles.add(plateauPossible);
-                plateauPossible = copierTableau(plateau);
-            }
-            else if (plateau[avancement][colonne - 1] != pion.getCouleur()) {
-                plateauPossible[avancement][colonne - 1] = plateau[ligne][colonne];
-                plateauPossible[ligne][colonne] = 0;
-                mouvementsPossibles.add(plateauPossible);
-                plateauPossible = copierTableau(plateau);
-            }
-        }
-        if(colonne != plateau.length - 1) {
-            if(plateau[avancement][colonne + 1] == 0) {
-                plateauPossible[avancement][colonne + 1] = plateau[ligne][colonne];
-                plateauPossible[ligne][colonne] = 0;
-                mouvementsPossibles.add(plateauPossible);
-                plateauPossible = copierTableau(plateau);
-            }
-            else if (plateau[avancement][colonne + 1] != pion.getCouleur()) {
-                plateauPossible[avancement][colonne + 1] = plateau[ligne][colonne];
-                plateauPossible[ligne][colonne] = 0;
-                mouvementsPossibles.add(plateauPossible);
-                plateauPossible = copierTableau(plateau);
-            }
-        }
-        return mouvementsPossibles;
-    }
-
-    public static Integer[][] copierTableau(Integer[][] plateau) {
-        Integer[][] copie = new Integer[plateau.length][plateau.length];
-        for (int i = 0; i < plateau.length; i++) {
-            for(int j = 0; j < plateau.length; j++) {
-                copie[i][j] = plateau[i][j];
-            }
-        }
-        return copie;
-    }
-
 }
