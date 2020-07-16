@@ -459,6 +459,7 @@ public class Jeu {
             pionNoir.setPosition(nouveauX, nouveauY);
             this.pionsRouges.remove(pionRouge);
             afficherPlateau(this.plateau);
+            System.out.println("\n");
         }
 
     }

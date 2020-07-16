@@ -51,7 +51,7 @@ class Client {
                     Noeud racine = new Noeud(jeu.getPlateau(), 0);
                     Minmax minmax = new Minmax(racine);
                     String nextMove = minmax.findPositionChange(jeu, racine, PROFONDEUR, jeu.getMaCouleur());
-                    System.out.println("MON COUP : " + nextMove);
+                    System.out.println("Mon coup : " + nextMove);
 
                     output.write(nextMove.getBytes(),0,nextMove.length());
                     output.flush();
@@ -97,14 +97,12 @@ class Client {
                     jeu.modifierPlateau(str, jeu.getCouleurAdverse());
                     System.out.println("Entrez votre coup : ");
 
-                    System.out.println("MA COUL : " + jeu.getMaCouleur());
 
                     Noeud racine = new Noeud(jeu.getPlateau(), 0);
                     Minmax minmax = new Minmax(racine);
                     String nextMove = minmax.findPositionChange(jeu, racine,PROFONDEUR,jeu.getMaCouleur());
-                    System.out.println("MON COUP : " + nextMove);
-                    //String move = "D7-C6";
-                    //move = console.readLine();
+                    System.out.println("Mon coup : " + nextMove);
+
                     output.write(nextMove.getBytes(),0,nextMove.length());
                     output.flush();
                     jeu.modifierPlateau(nextMove, jeu.getMaCouleur());
@@ -113,9 +111,11 @@ class Client {
                 // Le dernier coup est invalide
                 if(cmd == '4'){
                     System.out.println("Coup invalide, entrez un nouveau coup : ");
-                    String move = null;
-                    move = console.readLine();
-                    output.write(move.getBytes(),0,move.length());
+                    Noeud racine = new Noeud(jeu.getPlateau(), 0);
+                    Minmax minmax = new Minmax(racine);
+                    String nextMove = minmax.findPositionChange(jeu, racine,PROFONDEUR,jeu.getMaCouleur());
+                    System.out.println("Mon coup : " + nextMove);
+                    output.write(nextMove.getBytes(),0,nextMove.length());
                     output.flush();
 
                 }
@@ -130,7 +130,6 @@ class Client {
                     move = console.readLine();
                     output.write(move.getBytes(),0,move.length());
                     output.flush();
-
                 }
             }
         }
@@ -139,7 +138,5 @@ class Client {
         }
 
     }
-
-
 
 }
