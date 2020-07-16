@@ -47,11 +47,15 @@ class Client {
                     jeu = new Jeu(board, true);
 
                     System.out.println("Nouvelle partie! Vous jouer blanc, entrez votre premier coup : ");
-                    String move = null;
-                    move = console.readLine();
-                    output.write(move.getBytes(),0,move.length());
+                    Noeud racine = new Noeud(jeu.getPlateau(), 0);
+                    Minmax minmax = new Minmax(racine);
+                    String nextMove = minmax.findPositionChange(jeu, racine,2,jeu.getMaCouleur());
+                    System.out.println("MON COUP : " + nextMove);
+                    //String move = "D7-C6";
+                    //move = console.readLine();
+                    output.write(nextMove.getBytes(),0,nextMove.length());
                     output.flush();
-                    jeu.modifierPlateau(move, jeu.getMaCouleur());
+                    jeu.modifierPlateau(nextMove, jeu.getMaCouleur());
                 }
                 // Debut de la partie en joueur Noir
                 if(cmd == '2'){
