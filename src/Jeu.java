@@ -128,7 +128,7 @@ public class Jeu {
         this.plateau = nouvelEtat;
     }
 
-    public void afficherPlateau(Integer[][] plateau) {
+    public static void afficherPlateau(Integer[][] plateau) {
         for(int i = 0; i < plateau.length; i++){
             System.out.print("\n");
             for(int j = 0; j < plateau.length; j++) {
@@ -287,6 +287,11 @@ public class Jeu {
                 }
             }
         }
+        /*for(int i = 0; i < mouvementsPossibles.size(); i++){
+            afficherPlateau(mouvementsPossibles.get(i));
+            System.out.print(" ");
+
+        }*/
         return mouvementsPossibles;
     }
 
@@ -414,36 +419,46 @@ public class Jeu {
         }
 
         if(joueur) {
+            Pion pionRouge = new Pion();
             for(Pion pion : pionsRouges){
                 if(pion.getPosition().x == ancienX && pion.getPosition().y == ancienY) {
-                    this.plateau[ancienX][ancienY] = 0;
-                    this.plateau[nouveauX][nouveauY] = 4;
-                    pion.setPosition(nouveauX, nouveauY);
-
+                    pionRouge = pion;
+                    break;
                 }
             }
+            Pion pionNoir = new Pion();
             for(Pion pion : pionsNoirs) {
                 if(pion.getPosition().x == nouveauX && pion.getPosition().y == nouveauY) {
-                    this.pionsNoirs.remove(pion);
-
+                    pionNoir = pion;
+                    break;
                 }
             }
+            this.plateau[ancienX][ancienY] = 0;
+            this.plateau[nouveauX][nouveauY] = 4;
+            pionRouge.setPosition(nouveauX, nouveauY);
+            this.pionsNoirs.remove(pionNoir);
+
         }
         else {
+            Pion pionNoir = new Pion();
             for(Pion pion : pionsNoirs){
                 if(pion.getPosition().x == ancienX && pion.getPosition().y == ancienY) {
-                    this.plateau[ancienX][ancienY] = 0;
-                    this.plateau[nouveauX][nouveauY] = 2;
-                    pion.setPosition(nouveauX, nouveauY);
-
+                    pionNoir = pion;
+                    break;
                 }
             }
+            Pion pionRouge = new Pion();
             for(Pion pion : pionsRouges) {
                 if(pion.getPosition().x == nouveauX && pion.getPosition().y == nouveauY) {
-                    this.pionsRouges.remove(pion);
-
+                    pionRouge = pion;
+                    break;
                 }
             }
+            this.plateau[ancienX][ancienY] = 0;
+            this.plateau[nouveauX][nouveauY] = 2;
+            pionNoir.setPosition(nouveauX, nouveauY);
+            this.pionsRouges.remove(pionRouge);
+            afficherPlateau(this.plateau);
         }
 
     }

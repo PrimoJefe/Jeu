@@ -9,6 +9,7 @@ public class Pion {
     private Point position;
     private int direction;
 
+    public Pion (){};
     public Pion (boolean couleur, Point position, int direction) {
         this.couleur = couleur;
         this.position = position;
