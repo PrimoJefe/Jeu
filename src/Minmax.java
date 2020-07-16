@@ -60,10 +60,10 @@ public class Minmax {
         Noeud noeudEnfant = new Noeud(noeud.getBoard(), noeud.getScore());
 
         if(joueurRouge) {
-            enfants = Jeu.generateurMouvement(noeud.getBoard(), jeu.getPionsRouges());
+            enfants = jeu.generateurMouvement(noeud.getBoard(), jeu.getPionsRouges());
         }
         else {
-            enfants = Jeu.generateurMouvement(noeud.getBoard(), jeu.getPionsNoirs());
+            enfants = jeu.generateurMouvement(noeud.getBoard(), jeu.getPionsNoirs());
         }
 
         if (profondeur == 0) {
@@ -75,7 +75,7 @@ public class Minmax {
             jeu.afficherPlateau(noeud.getBoard());
             System.out.println("\n");
             noeud.setScore(result);*/
-            int valeur = Jeu.getValue(noeud.getBoard());
+            int valeur = jeu.getValue(noeud.getBoard());
             noeud.setScore(valeur);
             return noeud;
         }

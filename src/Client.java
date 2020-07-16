@@ -3,6 +3,7 @@ import java.net.*;
 
 
 class Client {
+    public static final int PROFONDEUR = 2;
     public static void main(String[] args) {
 
         Socket MyClient;
@@ -49,10 +50,9 @@ class Client {
                     System.out.println("Nouvelle partie! Vous jouer blanc, entrez votre premier coup : ");
                     Noeud racine = new Noeud(jeu.getPlateau(), 0);
                     Minmax minmax = new Minmax(racine);
-                    String nextMove = minmax.findPositionChange(jeu, racine,2,jeu.getMaCouleur());
+                    String nextMove = minmax.findPositionChange(jeu, racine, PROFONDEUR, jeu.getMaCouleur());
                     System.out.println("MON COUP : " + nextMove);
-                    //String move = "D7-C6";
-                    //move = console.readLine();
+
                     output.write(nextMove.getBytes(),0,nextMove.length());
                     output.flush();
                     jeu.modifierPlateau(nextMove, jeu.getMaCouleur());
@@ -101,7 +101,7 @@ class Client {
 
                     Noeud racine = new Noeud(jeu.getPlateau(), 0);
                     Minmax minmax = new Minmax(racine);
-                    String nextMove = minmax.findPositionChange(jeu, racine,2,jeu.getMaCouleur());
+                    String nextMove = minmax.findPositionChange(jeu, racine,PROFONDEUR,jeu.getMaCouleur());
                     System.out.println("MON COUP : " + nextMove);
                     //String move = "D7-C6";
                     //move = console.readLine();

@@ -7,8 +7,8 @@ public class Jeu {
     private Integer[][] plateau;
     private boolean maCouleur;
     private boolean couleurAdverse;
-    private static ArrayList<Pion> pionsRouges;
-    private static ArrayList<Pion> pionsNoirs;
+    private ArrayList<Pion> pionsRouges;
+    private ArrayList<Pion> pionsNoirs;
 
     public Jeu() {};
     public Jeu(Integer[][] plateau, boolean maCouleur) {
@@ -116,11 +116,11 @@ public class Jeu {
     public boolean getMaCouleur() { return this.maCouleur; }
     public boolean getCouleurAdverse() { return this.couleurAdverse; }
 
-    public static ArrayList<Pion> getPionsRouges() {
+    public ArrayList<Pion> getPionsRouges() {
         return pionsRouges;
     }
 
-    public static ArrayList<Pion> getPionsNoirs() {
+    public ArrayList<Pion> getPionsNoirs() {
         return pionsNoirs;
     }
 
@@ -128,7 +128,7 @@ public class Jeu {
         this.plateau = nouvelEtat;
     }
 
-    public static void afficherPlateau(Integer[][] plateau) {
+    public void afficherPlateau(Integer[][] plateau) {
         for(int i = 0; i < plateau.length; i++){
             System.out.print("\n");
             for(int j = 0; j < plateau.length; j++) {
@@ -137,7 +137,7 @@ public class Jeu {
         }
     }
 
-    public static int getValue(Integer[][] board){
+    public int getValue(Integer[][] board){
         int victoire = 100;
         boolean victoireNoir = false;
         boolean victoireRouge = false;
@@ -176,7 +176,7 @@ public class Jeu {
         return value;
     }
 
-    public static int getPieceValue(Integer[][] board, int row, int column, int team)
+    public int getPieceValue(Integer[][] board, int row, int column, int team)
     {
         int value = 0;
 
@@ -235,7 +235,7 @@ public class Jeu {
         return value;
     }
 
-    public static ArrayList<Integer[][]> generateurMouvement(Integer[][] plateau, ArrayList<Pion> pions) {
+    public ArrayList<Integer[][]> generateurMouvement(Integer[][] plateau, ArrayList<Pion> pions) {
         Integer[][] plateauPossible = copierTableau(plateau);
         ArrayList<Integer[][]> mouvementsPossibles = new ArrayList<Integer[][]>();
 
@@ -295,7 +295,7 @@ public class Jeu {
         return mouvementsPossibles;
     }
 
-    public static Integer[][] copierTableau(Integer[][] plateau) {
+    public Integer[][] copierTableau(Integer[][] plateau) {
         Integer[][] copie = new Integer[plateau.length][plateau.length];
         for (int i = 0; i < plateau.length; i++) {
             for(int j = 0; j < plateau.length; j++) {
