@@ -64,7 +64,7 @@ public class Minmax {
 
                 minEval = Math.min(minEval, eval);
 
-                alpha = Math.max(alpha, noeudMin.getScore());
+                beta = Math.min(beta, noeudMin.getScore());
 
                 if (beta <= alpha) {
                     break;
