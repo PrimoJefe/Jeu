@@ -306,117 +306,10 @@ public class Jeu {
     }
 
     public void modifierPlateau(String s, boolean joueur){
-        int ancienY = -1;
-        int ancienX = -1;
-        int nouveauY = -1;
-        int nouveauX = -1;
-
-        switch (s.charAt(0)){
-            case 'A':
-                ancienY = 0;
-                break;
-            case 'B':
-                ancienY = 1;
-                break;
-            case 'C':
-                ancienY = 2;
-                break;
-            case 'D':
-                ancienY = 3;
-                break;
-            case 'E':
-                ancienY = 4;
-                break;
-            case 'F':
-                ancienY = 5;
-                break;
-            case 'G':
-                ancienY = 6;
-                break;
-            case 'H':
-                ancienY = 7;
-                break;
-        }
-
-        switch (s.charAt(5)){
-            case 'A':
-                nouveauY = 0;
-                break;
-            case 'B':
-                nouveauY = 1;
-                break;
-            case 'C':
-                nouveauY = 2;
-                break;
-            case 'D':
-                nouveauY = 3;
-                break;
-            case 'E':
-                nouveauY = 4;
-                break;
-            case 'F':
-                nouveauY = 5;
-                break;
-            case 'G':
-                nouveauY = 6;
-                break;
-            case 'H':
-                nouveauY = 7;
-                break;
-        }
-        switch(Integer.parseInt(String.valueOf(s.charAt(1)))) {
-            case 1 :
-                ancienX = 7;
-                break;
-            case 2 :
-                ancienX = 6;
-                break;
-            case 3 :
-                ancienX = 5;
-                break;
-            case 4 :
-                ancienX = 4;
-                break;
-            case 5 :
-                ancienX = 3;
-                break;
-            case 6 :
-                ancienX = 2;
-                break;
-            case 7 :
-                ancienX = 1;
-                break;
-            case 8 :
-                ancienX = 0;
-                break;
-        }
-
-        switch(Integer.parseInt(String.valueOf(s.charAt(6)))) {
-            case 1 :
-                nouveauX = 7;
-                break;
-            case 2 :
-                nouveauX = 6;
-                break;
-            case 3 :
-                nouveauX = 5;
-                break;
-            case 4 :
-                nouveauX = 4;
-                break;
-            case 5 :
-                nouveauX = 3;
-                break;
-            case 6 :
-                nouveauX = 2;
-                break;
-            case 7 :
-                nouveauX = 1;
-                break;
-            case 8 :
-                nouveauX = 0;
-                break;
-        }
+        int ancienY = conversionLettreEnChiffre(s.charAt(0));
+        int ancienX = conversionChiffreEnChiffre(Integer.parseInt(String.valueOf(s.charAt(1))));
+        int nouveauY = conversionLettreEnChiffre(s.charAt(5));
+        int nouveauX = conversionChiffreEnChiffre(Integer.parseInt(String.valueOf(s.charAt(6))));
 
         if(joueur) {
             Pion pionRouge = new Pion();
@@ -462,5 +355,70 @@ public class Jeu {
             System.out.println("\n");
         }
 
+    }
+
+    public int conversionLettreEnChiffre(char lettre) {
+        int chiffre = -1;
+
+        switch (lettre){
+            case 'A':
+                chiffre = 0;
+                break;
+            case 'B':
+                chiffre = 1;
+                break;
+            case 'C':
+                chiffre = 2;
+                break;
+            case 'D':
+                chiffre = 3;
+                break;
+            case 'E':
+                chiffre = 4;
+                break;
+            case 'F':
+                chiffre = 5;
+                break;
+            case 'G':
+                chiffre = 6;
+                break;
+            case 'H':
+                chiffre = 7;
+                break;
+        }
+
+        return chiffre;
+    }
+
+    public int conversionChiffreEnChiffre(int chiffreInitial) {
+        int chiffre = -1;
+
+        switch(chiffreInitial) {
+            case 1 :
+                chiffre = 7;
+                break;
+            case 2 :
+                chiffre = 6;
+                break;
+            case 3 :
+                chiffre = 5;
+                break;
+            case 4 :
+                chiffre = 4;
+                break;
+            case 5 :
+                chiffre = 3;
+                break;
+            case 6 :
+                chiffre = 2;
+                break;
+            case 7 :
+                chiffre = 1;
+                break;
+            case 8 :
+                chiffre = 0;
+                break;
+        }
+        return chiffre;
     }
 }
