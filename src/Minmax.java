@@ -14,13 +14,17 @@ public class Minmax {
         int eval;
         int minEval;
         int maxEval;
+
+        if (profondeur == 0) {
+            System.out.println("wait");
+        }
         Noeud noeudEnfant = new Noeud(noeud.getBoard(), noeud.getScore());
 
         if(joueurRouge) {
-            enfants = jeu.generateurMouvement(noeud.getBoard(), jeu.getPionsRouges());
+            enfants = jeu.generateurMouvement(noeud.getBoard(), jeu.getDirectionRouge());
         }
         else {
-            enfants = jeu.generateurMouvement(noeud.getBoard(), jeu.getPionsNoirs());
+            enfants = jeu.generateurMouvement(noeud.getBoard(), jeu.getDirectionNoir());
         }
 //        System.out.println("---------------------------------");
 //        for(Integer[][] enfant : enfants) {
@@ -43,21 +47,28 @@ public class Minmax {
         if (joueurRouge) {
             maxEval = -1000000000;
             Noeud temp = new Noeud(noeud.getBoard(), noeud.getScore());
-            for (Integer[][] enfant : enfants) {
-                noeudEnfant = new Noeud(enfant, maxEval);
-                Noeud noeudMax = minimax(jeu, noeudEnfant, profondeur - 1, alpha, beta, false);
-                eval = noeudMax.getScore();
+            if (enfants.size()>0) {
+                for (Integer[][] enfant : enfants) {
+                    noeudEnfant = new Noeud(enfant, maxEval);
+                    Noeud noeudMax = minimax(jeu, noeudEnfant, profondeur - 1, alpha, beta, false);
+                    eval = noeudMax.getScore();
 
-                if(eval > maxEval) {
-                    temp = noeudEnfant;
+                    if (eval > maxEval) {
+                        temp = noeudEnfant;
+                    }
+                    maxEval = Math.max(maxEval, eval);
+
+                    alpha = Math.max(alpha, noeudMax.getScore());
+
+                    if (beta <= alpha) {
+                        break;
+                    }
                 }
-                maxEval = Math.max(maxEval, eval);
-
-                alpha = Math.max(alpha, noeudMax.getScore());
-
-                if (beta <= alpha) {
-                    break;
-                }
+            }
+            else{
+                int valeur = jeu.getValue(noeudEnfant.getBoard());
+                noeud.setScore(valeur);
+                return noeud;
             }
             return (new Noeud(temp.getBoard(), maxEval));
         }
@@ -65,28 +76,35 @@ public class Minmax {
         else {
             minEval = 1000000000;
             Noeud temp = new Noeud(noeud.getBoard(), noeud.getScore());
-            for (Integer[][] enfant : enfants) {
-                noeudEnfant = new Noeud(enfant, minEval);
-                Noeud noeudMin = minimax(jeu, noeudEnfant, profondeur - 1, alpha, beta, true);
-                eval = noeudMin.getScore();
+            if (enfants.size()>0) {
+                for (Integer[][] enfant : enfants) {
+                    noeudEnfant = new Noeud(enfant, minEval);
+                    Noeud noeudMin = minimax(jeu, noeudEnfant, profondeur - 1, alpha, beta, true);
+                    eval = noeudMin.getScore();
 
-                if(eval < minEval) {
-                    temp = noeudEnfant;
+                    if (eval < minEval) {
+                        temp = noeudEnfant;
+                    }
+                    minEval = Math.min(minEval, eval);
+
+                    //                if(profondeur == 4) {
+                    //                    System.out.println("----------------------------------------------");
+                    //                    System.out.println("MinEval : " + minEval + " eval : " + eval);
+                    //                    jeu.afficherPlateau(noeudEnfant.getBoard());
+                    //                    System.out.println("\n-------------------------------------------------------------");
+                    //                }
+
+                    beta = Math.min(beta, noeudMin.getScore());
+
+                    if (beta <= alpha) {
+                        break;
+                    }
                 }
-                minEval = Math.min(minEval, eval);
-
-//                if(profondeur == 4) {
-//                    System.out.println("----------------------------------------------");
-//                    System.out.println("MinEval : " + minEval + " eval : " + eval);
-//                    jeu.afficherPlateau(noeudEnfant.getBoard());
-//                    System.out.println("\n-------------------------------------------------------------");
-//                }
-
-                beta = Math.min(beta, noeudMin.getScore());
-
-                if (beta <= alpha) {
-                    break;
-                }
+            }
+            else{
+                int valeur = jeu.getValue(noeudEnfant.getBoard());
+                noeud.setScore(valeur);
+                return noeud;
             }
             return (new Noeud(temp.getBoard(), minEval));
         }

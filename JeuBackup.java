@@ -18,17 +18,17 @@ public class Jeu {
     private int pieceValeurAttack = 50;
     private int pieceValeurProtection = 65;
     private int pieceConnectionH = 35;
-    private int pieceConnectionV = 15;
+    private int pieceConncectionV = 15;
     private int pieceTrouColonne = 20;
-    private int pieceMaison = 150;
-    private int directionRouge = 0;
-    private int directionNoir = 0;
-
+    private int pieceMaison = 10;
 
     public Jeu() {};
     public Jeu(Integer[][] plateau, boolean maCouleur) {
-
-
+        /*for(int i = 0; i < 8; i++) {
+            for(int j = 0; j < 8; j++) {
+                this.plateau[j][i] = plateau[i][j];
+            }
+        }*/
         this.plateau = plateau;
         this.maCouleur = maCouleur;
         if(maCouleur) {
@@ -41,6 +41,14 @@ public class Jeu {
         this.pionsNoirs = new ArrayList<Pion>();
         this.pionsRouges = new ArrayList<Pion>();
 
+       /* if (Integer.parseInt(String.valueOf(configuration.charAt(0))) == 1) {
+            this.maCouleur = true;
+            this.couleurAdverse = false;
+        }
+        else {
+            this.maCouleur = false;
+            this.couleurAdverse = true;
+        }*/
 
         int i = 1;
         int direction = 1;
@@ -55,18 +63,64 @@ public class Jeu {
                 if (valeur == 4) {
                     Pion pion = new Pion(true, position, direction);
                     pionsRouges.add(pion);
-                    this.directionRouge = direction;
                 }
                 else if (valeur == 2) {
                     Pion pion = new Pion(false, position, direction);
                     pionsNoirs.add(pion);
-                    this.directionNoir = direction;
                 }
                 i++;
             }
         }
     }
-
+//    public Jeu(String configuration) {
+//        /*for(int i = 0; i < 8; i++) {
+//            for(int j = 0; j < 8; j++) {
+//                this.plateau[j][i] = plateau[i][j];
+//            }
+//        }*/
+//        this.plateau = new Integer[8][8];
+//        if(maCouleur) {
+//            this.couleurAdverse = false;
+//        }
+//        else {
+//            this.couleurAdverse = true;
+//        }
+//
+//        this.pionsNoirs = new ArrayList<Pion>();
+//        this.pionsRouges = new ArrayList<Pion>();
+//
+//       if (Integer.parseInt(String.valueOf(configuration.charAt(0))) == 1) {
+//            this.maCouleur = true;
+//            this.couleurAdverse = false;
+//        }
+//       else {
+//            this.maCouleur = false;
+//            this.couleurAdverse = true;
+//       }
+//
+//        int i = 1;
+//        int direction = 1;
+//        for (int x = 0; x < this.plateau.length; x++) {
+//            for (int y = 0; y < this.plateau.length; y++) {
+//                int valeur = Integer.parseInt(String.valueOf(configuration.charAt(i)));
+//                this.plateau[x][y] = valeur;
+//                Point position = new Point(x,y);
+//                if (x > (plateau.length-1)/2) {
+//                    direction = -1;
+//                }
+//
+//                if (valeur == 4) {
+//                    Pion pion = new Pion(true, position, direction);
+//                    pionsRouges.add(pion);
+//                }
+//                else if (valeur == 2) {
+//                    Pion pion = new Pion(false, position, direction);
+//                    pionsNoirs.add(pion);
+//                }
+//                i++;
+//            }
+//        }
+//    }
 
     public Integer[][] getPlateau() {
         return this.plateau;
@@ -116,20 +170,9 @@ public class Jeu {
                     value += getPieceValue(board,ligne, colonne,4);
                     if(ligne ==0){victoireRouge = true;}
                     if(ligne == 7){
-                        value += pieceMaison;
+                        value += homeValue;
                     }
-
-                    //trouver colonne vide
-                    int nbColonneVide = 0;
-                    for (int i= 0; i < 8; i++){
-                        int nbPiontEnemiColonne = 0;
-                        for (int j = 0; j< 8; j++){
-                            if (board[j][i]==2){nbPiontEnemiColonne++;}
-                        }
-                        if (nbPiontEnemiColonne == 0){nbColonneVide++;}
-                    }
-                    if (nbColonneVide>0){value+=pieceTrouColonne;}
-//                    if(ligne == 1 || ligne == 2){value += valeurDanger;}
+                    if(ligne == 1 || ligne == 2){value += valeurDanger;}
                     //if(y == 0){Value += HomeGroundValue;}
 //                    if {(column > 0) ThreatA = (board[GetPosition(y - 1, 7).NoPieceOnSquare);}
 //                    if (column < 7) ThreatB = (board.GetPosition(y + 1, 7).NoPieceOnSquare);
@@ -140,18 +183,8 @@ public class Jeu {
                     piecesNoir++;
                     value += getPieceValue(board,ligne, colonne,2);
                     if(ligne ==7){victoireNoir = true;}
-                    if(ligne == 0){value -= pieceMaison;}
-//                    if(ligne == 6 || ligne == 5){value -= valeurDanger;}
-                    //trouver colonne vide
-                    int nbColonneVide = 0;
-                    for (int i= 0; i < 8; i++){
-                        int nbPiontEnemiColonne = 0;
-                        for (int j = 0; j< 8; j++){
-                            if (board[j][i]==4){nbPiontEnemiColonne++;}
-                        }
-                        if (nbPiontEnemiColonne == 0){nbColonneVide++;}
-                    }
-                    if (nbColonneVide>0){value-=pieceTrouColonne;}
+                    if(ligne == 0){value -= homeValue;}
+                    if(ligne == 6 || ligne == 5){value -= valeurDanger;}
                 }
             }
         }
@@ -166,22 +199,21 @@ public class Jeu {
         return value;
     }
 
-    public int getPieceValue(Integer[][] board, int row, int column, int team) {
+    public int getPieceValue(Integer[][] board, int row, int column, int team)
+    {
         int value = valeurPiece;
         int coupPossibles = 0;
         boolean vulnerable = false;
         boolean defendu = false;
         boolean connecterH = false;
         boolean connecterV = false;
-        boolean gagnant = false;
 
 
         // add connections value//
 
         if (team == 2){ //NOIR MIN
+            value = value*-1;
             int adversaire = 4;
-
-            if (row ==7){gagnant = true;}
 
             if (column > 0) {
                 if (board[row][column - 1] == team) {
@@ -203,216 +235,150 @@ public class Jeu {
                     connecterV = true;}
             }
 
-            if (row > 0){
-                if(column>0){
-                    if(board[row-1][column-1]==team){defendu = true;}
-                }
-                if(column<7){
-                    if(board[row-1][column+1]==team){defendu = true;}
-                }
-            }
-            if (row < 7){
-                if(column>0){
-                    if(board[row+1][column-1]==adversaire){vulnerable = true;}
-                }
-                if(column<7){
-                    if(board[row+1][column+1]==adversaire){vulnerable = true;}
-                }
-            }
 
-            // facteur mobile
+
+
+            // add to the value the protected value
             if (row > 0 && column > 0 && column < 7){
-                if(board[row-1][column-1]==0){coupPossibles=coupPossibles+1;}
-                if(board[row-1][column+1]==0){coupPossibles=coupPossibles+1;}
-                if(board[row-1][column]==0){coupPossibles=coupPossibles+1;}
-            }
+                if(board[row-1][column-1]==team||board[row-1][column+1]==team){defendu = true;}
 
-
-            if (gagnant){
-                value+= victoire;
-            }
-            if (connecterH){value += pieceConnectionH;}
-//            if (connecterV){value += pieceConnectionV;}
-            if (defendu){value += pieceValeurProtection;}
-            if (vulnerable){value -= pieceValeurAttack;}
-
-            if (vulnerable && !defendu){value -= pieceValeurAttack*2;}
-
-            if (defendu){
-                if (row == 5) {
-                    value += pieceDanger;
+                if (defendu){
+                    value+=2;
                 }
-                else if (row == 6){
-                    value += pieceGrandDanger;
-                }
+//                if(board[row-1][column-1]==team||board[row-1][column+1]==team){value -= 0;}
+
+//                if(board[row-1][column+1]==team){value -= 5;}
+            }
+            // evaluate attack
+            if (row < 7 && column > 0 && column < 7){
+                if(board[row+1][column-1]==adversaire||board[row+1][column+1]==adversaire){vulnerable = true;}
+//                if(board[row+1][column-1]!=team||board[row+1][column+1]!=team){value += 1;}
+                //if(board[row+1][column+1]!=team){value += 5;}
+
+                if (vulnerable){value +=1;}
             }
 
-            if (!vulnerable && row==6){
-                value+=victoire;
+            // test
+            if (vulnerable && defendu){
+                value +=2;
             }
 
-            value += coupPossibles*2;
-            value += row * pieceDanger;
-            value = value*-1;
+            // evaluate mobility
+            if (row < 7 && column > 0 && column < 7){
+                if(board[row+1][column-1]==0){coupPossibles=coupPossibles+1;}
+                if(board[row+1][column+1]==0){coupPossibles=coupPossibles+1;}
+                if(board[row+1][column]==0){coupPossibles=coupPossibles+1;}
+            }
+
+            // evaluate block
+            if(row <= 5 && column > 0 && column < 7){
+                if(board[row+2][column-1]==adversaire || board[row+2][column]==adversaire || board[row+2][column-1]==adversaire){
+                    value -= 0;}
+//                if(board[row+2][column]==adversaire){value -= 7;}
+//                if(board[row+2][column-1]==adversaire){value -= 7;}
+            }
+
+//            value += coupPossibles;
+
+            // evalate distance to goal
+
+//            value = value*(row+1);
 
         }
 
-        else { //rouge MAX
+        else{ //rouge MAX
             int adversaire = 2;
+            // add to the value the protected value
+            if (row < 7 && column > 0 && column < 7){
+                if(board[row+1][column-1]==team||board[row+1][column+1]==team){defendu = true;}
 
-
-            if (row ==0){gagnant = true;}
-
-            if (column > 0) {
-                if (board[row][column - 1] == team) {
-                    connecterH = true;
+                if (defendu){
+                    value+=2;
                 }
+//                if(board[row+1][column+1]==team){value += 5;}
+            }
+            // evaluate attack
+            if (row > 0 && column > 0 && column < 7){
+                if(board[row-1][column-1]==adversaire||board[row-1][column+1]==adversaire){vulnerable = true;}
+                if (vulnerable){value +=1;}
+//                if(board[row-1][column+1]!=team){value -= 5;}
             }
 
-            if (column < 7) {
-                if (board[row][column + 1] == team) {
-                    connecterH = true;
-                }
+            // test
+            if (vulnerable && defendu){
+                value +=2;
             }
 
-            if (row > 0) {
-                if (board[row - 1][column] == team) {
-                    connecterV = true;
-                }
-            }
-
-            if (row < 7) {
-                if (board[row + 1][column] == team) {
-                    connecterV = true;
-                }
-            }
-
-            if (row < 7) {
-                if (column > 0) {
-                    if (board[row + 1][column - 1] == team) {
-                        defendu = true;
-                    }
-                }
-                if (column < 7) {
-                    if (board[row + 1][column + 1] == team) {
-                        defendu = true;
-                    }
-                }
-            }
-            if (row > 0) {
-                if (column > 0) {
-                    if (board[row - 1][column - 1] == adversaire) {
-                        vulnerable = true;
-                    }
-                }
-                if (column < 7) {
-                    if (board[row - 1][column + 1] == adversaire) {
-                        vulnerable = true;
-                    }
-                }
-            }
-            // facteur mobile
+            // evaluate mobility
             if (row > 0 && column > 0 && column < 7){
                 if(board[row-1][column-1]==0){coupPossibles=coupPossibles+1;}
                 if(board[row-1][column+1]==0){coupPossibles=coupPossibles+1;}
                 if(board[row-1][column]==0){coupPossibles=coupPossibles+1;}
             }
-            value += coupPossibles*2;
+            // evaluate block
+            if(row >= 2 && column > 0 && column < 7){
+                if(board[row-2][column-1]==adversaire||board[row-2][column]==adversaire||board[row-2][column-1]==adversaire){value += 0;}
+//                if(board[row-2][column]!=team){value += 7;}
+//                if(board[row-2][column-1]!=team){value += 7;}
+            }
+            // mobility feature
+            value += coupPossibles;
 
-            if (gagnant){
-                value+= victoire;
-            }
-            if (connecterH) {
-                value += pieceConnectionH;
-            }
-            if (connecterV) {
-//                value += pieceConnectionV;
-            }
-            if (defendu) {
-                value += pieceValeurProtection;
-            }
-            if (vulnerable) {
-                value -= pieceValeurAttack;
-            }
-
-            if (vulnerable && !defendu) {
-                value -= 2*pieceValeurAttack;
-            }
-
-            if (defendu) {
-                if (row == 2) {
-                    value += pieceDanger;
-                } else if (row == 1) {
-                    value += pieceGrandDanger;
-                }
-            }
-
-            if (!vulnerable && row==1){
-                value+=victoire;
-            }
-
-            value += row * pieceDanger;
+            // evaluante distance to goal
+//            value = value*(8-row);
         }
-
         return value;
     }
 
-    public ArrayList<Integer[][]> generateurMouvement(Integer[][] plateau, int avancement) {
+    public ArrayList<Integer[][]> generateurMouvement(Integer[][] plateau, ArrayList<Pion> pions) {
         Integer[][] plateauPossible = copierTableau(plateau);
         ArrayList<Integer[][]> mouvementsPossibles = new ArrayList<Integer[][]>();
-        boolean feuille = false;
 
-        for (int ligne = 0; ligne < this.plateau.length; ligne++) {
-            for (int colonne = 0; colonne < this.plateau.length; colonne++) {
-                Point position = new Point(ligne, colonne);
-                int couleur = plateau[ligne][colonne];
+        for (Pion pion : pions) {
+            int ligne = pion.getPosition().x;
+            int colonne = pion.getPosition().y;
+            int avancement = ligne + pion.getDirection();
+            int couleur;
 
+            if (pion.getCouleur() == true) {
+                couleur = 4;
+            }
+            else {
+                couleur = 2;
+            }
 
-                if (couleur == 2) {
-                    if (ligne == 7) {
-                        mouvementsPossibles = new ArrayList<Integer[][]>();
-                        break;
-                    }
-                }
-
-                if (couleur == 4) {
-                    if (ligne == 0) {
-                        mouvementsPossibles = new ArrayList<Integer[][]>();
-                        break;
-                    }
-                }
-
-                if (plateau[avancement][colonne] == 0) {
-                    plateauPossible[avancement][colonne] = plateau[ligne][colonne];
+            if (plateau[avancement][colonne] == 0) {
+                plateauPossible[avancement][colonne] = plateau[ligne][colonne];
+                plateauPossible[ligne][colonne] = 0;
+                mouvementsPossibles.add(plateauPossible);
+                plateauPossible = copierTableau(plateau);
+            }
+            if(colonne != 0) {
+                if(plateau[avancement][colonne - 1] == 0) {
+                    plateauPossible[avancement][colonne - 1] = plateau[ligne][colonne];
                     plateauPossible[ligne][colonne] = 0;
                     mouvementsPossibles.add(plateauPossible);
                     plateauPossible = copierTableau(plateau);
                 }
-                if (colonne != 0) {
-                    if (plateau[avancement][colonne - 1] == 0) {
-                        plateauPossible[avancement][colonne - 1] = plateau[ligne][colonne];
-                        plateauPossible[ligne][colonne] = 0;
-                        mouvementsPossibles.add(plateauPossible);
-                        plateauPossible = copierTableau(plateau);
-                    } else if (plateau[avancement][colonne - 1] != couleur) {
-                        plateauPossible[avancement][colonne - 1] = plateau[ligne][colonne];
-                        plateauPossible[ligne][colonne] = 0;
-                        mouvementsPossibles.add(plateauPossible);
-                        plateauPossible = copierTableau(plateau);
-                    }
+                else if (plateau[avancement][colonne - 1] != couleur) {
+                    plateauPossible[avancement][colonne - 1] = plateau[ligne][colonne];
+                    plateauPossible[ligne][colonne] = 0;
+                    mouvementsPossibles.add(plateauPossible);
+                    plateauPossible = copierTableau(plateau);
                 }
-                if (colonne != plateau.length - 1) {
-                    if (plateau[avancement][colonne + 1] == 0) {
-                        plateauPossible[avancement][colonne + 1] = plateau[ligne][colonne];
-                        plateauPossible[ligne][colonne] = 0;
-                        mouvementsPossibles.add(plateauPossible);
-                        plateauPossible = copierTableau(plateau);
-                    } else if (plateau[avancement][colonne + 1] != couleur) {
-                        plateauPossible[avancement][colonne + 1] = plateau[ligne][colonne];
-                        plateauPossible[ligne][colonne] = 0;
-                        mouvementsPossibles.add(plateauPossible);
-                        plateauPossible = copierTableau(plateau);
-                    }
+            }
+            if(colonne != plateau.length - 1) {
+                if(plateau[avancement][colonne + 1] == 0) {
+                    plateauPossible[avancement][colonne + 1] = plateau[ligne][colonne];
+                    plateauPossible[ligne][colonne] = 0;
+                    mouvementsPossibles.add(plateauPossible);
+                    plateauPossible = copierTableau(plateau);
+                }
+                else if (plateau[avancement][colonne + 1] != couleur) {
+                    plateauPossible[avancement][colonne + 1] = plateau[ligne][colonne];
+                    plateauPossible[ligne][colonne] = 0;
+                    mouvementsPossibles.add(plateauPossible);
+                    plateauPossible = copierTableau(plateau);
                 }
             }
         }
@@ -553,11 +519,4 @@ public class Jeu {
         return chiffre;
     }
 
-    public int getDirectionRouge() {
-        return directionRouge;
-    }
-
-    public int getDirectionNoir() {
-        return directionNoir;
-    }
 }
