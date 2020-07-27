@@ -357,62 +357,55 @@ public class Jeu {
         return value;
     }
 
-    public ArrayList<Integer[][]> generateurMouvement(Integer[][] plateau, int avancement) {
+    public ArrayList<Integer[][]> generateurMouvement(Integer[][] plateau, ArrayList<Pion> pions) {
         Integer[][] plateauPossible = copierTableau(plateau);
         ArrayList<Integer[][]> mouvementsPossibles = new ArrayList<Integer[][]>();
-        boolean feuille = false;
 
-        for (int ligne = 0; ligne < this.plateau.length; ligne++) {
-            for (int colonne = 0; colonne < this.plateau.length; colonne++) {
-                Point position = new Point(ligne, colonne);
-                int couleur = plateau[ligne][colonne];
+        for (Pion pion : pions) {
+            int ligne = pion.getPosition().x;
+            int colonne = pion.getPosition().y;
+            int avancement = ligne + pion.getDirection();
+            int couleur;
 
+            if (pion.getCouleur() == true) {
+                couleur = 4;
+            }
+            else {
+                couleur = 2;
+            }
 
-                if (couleur == 2) {
-                    if (ligne == 7) {
-                        mouvementsPossibles = new ArrayList<Integer[][]>();
-                        break;
-                    }
-                }
-
-                if (couleur == 4) {
-                    if (ligne == 0) {
-                        mouvementsPossibles = new ArrayList<Integer[][]>();
-                        break;
-                    }
-                }
-
-                if (plateau[avancement][colonne] == 0) {
-                    plateauPossible[avancement][colonne] = plateau[ligne][colonne];
+            if (plateau[avancement][colonne] == 0) {
+                plateauPossible[avancement][colonne] = plateau[ligne][colonne];
+                plateauPossible[ligne][colonne] = 0;
+                mouvementsPossibles.add(plateauPossible);
+                plateauPossible = copierTableau(plateau);
+            }
+            if(colonne != 0) {
+                if(plateau[avancement][colonne - 1] == 0) {
+                    plateauPossible[avancement][colonne - 1] = plateau[ligne][colonne];
                     plateauPossible[ligne][colonne] = 0;
                     mouvementsPossibles.add(plateauPossible);
                     plateauPossible = copierTableau(plateau);
                 }
-                if (colonne != 0) {
-                    if (plateau[avancement][colonne - 1] == 0) {
-                        plateauPossible[avancement][colonne - 1] = plateau[ligne][colonne];
-                        plateauPossible[ligne][colonne] = 0;
-                        mouvementsPossibles.add(plateauPossible);
-                        plateauPossible = copierTableau(plateau);
-                    } else if (plateau[avancement][colonne - 1] != couleur) {
-                        plateauPossible[avancement][colonne - 1] = plateau[ligne][colonne];
-                        plateauPossible[ligne][colonne] = 0;
-                        mouvementsPossibles.add(plateauPossible);
-                        plateauPossible = copierTableau(plateau);
-                    }
+                else if (plateau[avancement][colonne - 1] != couleur) {
+                    plateauPossible[avancement][colonne - 1] = plateau[ligne][colonne];
+                    plateauPossible[ligne][colonne] = 0;
+                    mouvementsPossibles.add(plateauPossible);
+                    plateauPossible = copierTableau(plateau);
                 }
-                if (colonne != plateau.length - 1) {
-                    if (plateau[avancement][colonne + 1] == 0) {
-                        plateauPossible[avancement][colonne + 1] = plateau[ligne][colonne];
-                        plateauPossible[ligne][colonne] = 0;
-                        mouvementsPossibles.add(plateauPossible);
-                        plateauPossible = copierTableau(plateau);
-                    } else if (plateau[avancement][colonne + 1] != couleur) {
-                        plateauPossible[avancement][colonne + 1] = plateau[ligne][colonne];
-                        plateauPossible[ligne][colonne] = 0;
-                        mouvementsPossibles.add(plateauPossible);
-                        plateauPossible = copierTableau(plateau);
-                    }
+            }
+            if(colonne != plateau.length - 1) {
+                if(plateau[avancement][colonne + 1] == 0) {
+                    plateauPossible[avancement][colonne + 1] = plateau[ligne][colonne];
+                    plateauPossible[ligne][colonne] = 0;
+                    mouvementsPossibles.add(plateauPossible);
+                    plateauPossible = copierTableau(plateau);
+                }
+                else if (plateau[avancement][colonne + 1] != couleur) {
+                    plateauPossible[avancement][colonne + 1] = plateau[ligne][colonne];
+                    plateauPossible[ligne][colonne] = 0;
+                    mouvementsPossibles.add(plateauPossible);
+                    plateauPossible = copierTableau(plateau);
                 }
             }
         }
