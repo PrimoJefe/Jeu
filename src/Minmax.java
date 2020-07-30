@@ -19,10 +19,19 @@ public class Minmax {
         int minEval;
         int maxEval;
         Noeud noeudEnfant = new Noeud(cases, noeud.getScore(), pionsIn, pionsOut);
-
+        int i = 0;
         if (profondeur == 0) {
+            /*i++;
+            System.out.println("iii" + i);
             int valeur = jeu.getValue(noeudEnfant.getCases());
             noeud.setScore(valeur);
+            i++;
+            System.out.println("iii" + i);*/
+            Random r = new Random();
+            int low = 0;
+            int high = 100;
+            int result = r.nextInt(high-low) + low;
+            noeud.setScore(result);
             return noeud;
         }
 
@@ -39,28 +48,29 @@ public class Minmax {
 
                     Point nouvellePosition = new Point(Character.getNumericValue(deplacement.charAt(0)),
                             Character.getNumericValue(deplacement.charAt(1)));
-                    if (cases.get(nouvellePosition).getPion() != null) {
+                    if (cases.get(nouvellePosition).getPion().getCouleur() != null) {
                         pionsOut.remove(cases.get(nouvellePosition).getPion());
                     }
                     pion.setPosition(nouvellePosition);
                     cases.get(nouvellePosition).setPion(pion);
-                    cases.get(position).setPion(null);
-
-                    noeudEnfant = new Noeud(cases, maxEval, pionsIn, pionsOut);
-                    Noeud noeudMax = minimax(jeu, noeudEnfant, profondeur - 1, alpha, beta, false);
-                    eval = noeudMax.getScore();
-
-                    if (eval > maxEval) {
-                        temp = noeudEnfant;
-                    }
-                    maxEval = Math.max(maxEval, eval);
-
-                    alpha = Math.max(alpha, noeudMax.getScore());
-
-                    if (beta <= alpha) {
-                        break;
-                    }
+                    cases.get(position).setPion(new Pion(null, position, 0));
+                    System.out.println(position + "-" + nouvellePosition);
                 }
+                noeudEnfant = new Noeud(cases, maxEval, pionsIn, pionsOut);
+                Noeud noeudMax = minimax(jeu, noeudEnfant, profondeur - 1, alpha, beta, false);
+                eval = noeudMax.getScore();
+
+                if (eval > maxEval) {
+                    temp = noeudEnfant;
+                }
+                maxEval = Math.max(maxEval, eval);
+
+                alpha = Math.max(alpha, noeudMax.getScore());
+
+                if (beta <= alpha) {
+                    break;
+                }
+
             }
             return (new Noeud(temp.getCases(), maxEval, temp.getpionsRouges(), temp.getpionsNoirs()));
         }
@@ -72,37 +82,39 @@ public class Minmax {
             for(Pion pion : pionsIn){
                 Point position = pion.getPosition();
                 deplacements = jeu.generateurMouvement(cases, position, pion.getDirection(), joueur);
-                Pion pionQuiBouge = cases.get(position).getPion();
+
 
                 for(String deplacement : deplacements) {
 
                     Point nouvellePosition = new Point(Character.getNumericValue(deplacement.charAt(0)),
                             Character.getNumericValue(deplacement.charAt(1)));
-                    if (cases.get(nouvellePosition).getPion() != null) {
+                    if (cases.get(nouvellePosition).getPion().getCouleur() != null) {
                         pionsOut.remove(cases.get(nouvellePosition).getPion());
                     }
                     pion.setPosition(nouvellePosition);
                     cases.get(nouvellePosition).setPion(pion);
-                    cases.get(position).setPion(null);
-
-                    noeudEnfant = new Noeud(cases, minEval, pionsOut, pionsIn);
-                    Noeud noeudMin = minimax(jeu, noeudEnfant, profondeur - 1, alpha, beta, true);
-                    eval = noeudMin.getScore();
-
-                    if (eval < minEval) {
-                        temp = noeudEnfant;
-                    }
-                    minEval = Math.min(minEval, eval);
-
-                    beta = Math.min(beta, noeudMin.getScore());
-
-                    if (beta <= alpha) {
-                        break;
-                    }
+                    cases.get(position).setPion(new Pion(null, position, 0));
+                    System.out.println(position + "-" + nouvellePosition);
                 }
+                noeudEnfant = new Noeud(cases, minEval, pionsOut, pionsIn);
+                Noeud noeudMin = minimax(jeu, noeudEnfant, profondeur - 1, alpha, beta, true);
+                eval = noeudMin.getScore();
+
+                if (eval < minEval) {
+                    temp = noeudEnfant;
+                }
+                minEval = Math.min(minEval, eval);
+
+                beta = Math.min(beta, noeudMin.getScore());
+
+                if (beta <= alpha) {
+                    break;
+                }
+
             }
             return (new Noeud(temp.getCases(), minEval, temp.getpionsRouges(), temp.getpionsNoirs()));
         }
+
     }
 
 //    public Noeud minimax(Jeu jeu, Noeud noeud, int profondeur, int alpha, int beta, boolean joueurRouge) {
@@ -201,15 +213,15 @@ public class Minmax {
         for(int i=0; i<currentMoveBoard.size(); i++){
             for(int j=0; j<currentMoveBoard.size(); j++){
                 if(!currentMoveBoard.get(new Point(i, j)).equals(nextMoveBoard.get(new Point(i, j)))
-                        && nextMoveBoard.get(new Point(i, j)).getPion() != null
+                        && nextMoveBoard.get(new Point(i, j)).getPion().getCouleur() != null
                         && nextMoveBoard.get(new Point(i, j)).getPion().getCouleur() == false
                         || !currentMoveBoard.get(new Point(i, j)).equals(nextMoveBoard.get(new Point(i, j)))
-                        && nextMoveBoard.get(new Point(i, j)).getPion() != null
+                        && nextMoveBoard.get(new Point(i, j)).getPion().getCouleur() != null
                         && nextMoveBoard.get(new Point(i, j)).getPion().getCouleur() == true){
                     newX = i;
                     newY = j;
                 }if(!currentMoveBoard.get(new Point(i, j)).equals(nextMoveBoard.get(new Point(i, j)))
-                        && nextMoveBoard.get(new Point(i, j)).getPion() == null){
+                        && nextMoveBoard.get(new Point(i, j)).getPion().getCouleur() == null){
                     oldX = i;
                     oldY = j;
                 }

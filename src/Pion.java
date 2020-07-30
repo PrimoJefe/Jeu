@@ -5,18 +5,18 @@ public class Pion {
     //private static final int NOIR = 2;
     //private static final int ROUGE = 4;
 
-    private boolean couleur;
+    private Boolean couleur;
     private int direction;
     private Point position;
 
     public Pion (){};
-    public Pion (boolean couleur, Point position, int direction) {
+    public Pion (Boolean couleur, Point position, int direction) {
         this.couleur = couleur;
         this.position = position;
         this.direction = direction;
     }
 
-    public boolean getCouleur() {
+    public Boolean getCouleur() {
         return this.couleur;
     }
 

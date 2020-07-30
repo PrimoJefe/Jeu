@@ -50,7 +50,7 @@ public class Jeu {
                     caseP = new Case(position, pion);
                 }
                 else {
-                    caseP = new Case(position, null);
+                    caseP = new Case(position, new Pion(null, position, 0));
                 }
                 this.cases.put(position, caseP);
             }
@@ -58,6 +58,10 @@ public class Jeu {
     }
     public boolean getMaCouleur() { return this.maCouleur; }
     public boolean getCouleurAdverse() { return this.couleurAdverse; }
+
+    public HashMap<Point, Case> getCases() {
+        return cases;
+    }
 
     public ArrayList<Pion> getPionsRouges() {
         return pionsRouges;
@@ -85,7 +89,7 @@ public class Jeu {
         int value = 0;
         for (int x= 0; x < 8; x++){
             for (int y = 0; y< 8; y++){
-                if (cases.get(new Point(x,y)).getPion() == null) continue;
+                if (cases.get(new Point(x,y)).getPion().getCouleur() == null) continue;
                 if (cases.get(new Point(x,y)).getPion().getCouleur()) // ROUGE MAX
                 {
                     piecesRouges++;
@@ -115,13 +119,13 @@ public class Jeu {
         return value;
     }
 
-    public int getPieceValue(Map<Point, Case> cases, int row, int column, boolean team)
+    public int getPieceValue(Map<Point, Case> cases, int row, int column, Boolean team)
     {
         int value = 0;
 
         // add connections value//
 
-        if (!team){ //NOIR MIN
+        if (team == false){ //NOIR MIN
             // add to the value the protected value
             if (row > 0 && column > 0 && column < 7){
                 if(cases.get(new Point(row - 1, column - 1)).getPion().getCouleur() == team){value -= 5;}
@@ -148,7 +152,7 @@ public class Jeu {
 
         }
 
-        else{ //rouge MAX
+        else if(team == true){ //rouge MAX
             // add to the value the protected value
             if (row < 7 && column > 0 && column < 7){
                 if(cases.get(new Point(row + 1, column - 1)).getPion().getCouleur() == team){value += 5;}
@@ -282,16 +286,16 @@ public class Jeu {
 
         if(!(direction == -1 && position.x + direction == 0) && !(direction == 1 && position.x + direction == 7)) {
 
-            if (cases.get(devant).getPion() == null) {
+            if (cases.get(devant).getPion().getCouleur() == null) {
                 mouvementsPossibles.add("" + devant.x + devant.y);
             }
             if (depart.y != 0) {
-                if (cases.get(gauche).getPion() == null || cases.get(gauche).getPion().getCouleur() != joueur) {
+                if (cases.get(gauche).getPion().getCouleur() == null || cases.get(gauche).getPion().getCouleur() != joueur) {
                     mouvementsPossibles.add("" + gauche.x + gauche.y);
                 }
             }
             if (depart.y != 7) {
-                if (cases.get(droite).getPion() == null || cases.get(droite).getPion().getCouleur() != joueur) {
+                if (cases.get(droite).getPion().getCouleur() == null || cases.get(droite).getPion().getCouleur() != joueur) {
                     mouvementsPossibles.add("" + droite.x + droite.y);
                 }
             }
@@ -330,7 +334,7 @@ public class Jeu {
                     break;
                 }
             }
-            this.cases.get(new Point(ancienX, ancienY)).setPion(null);
+            this.cases.get(new Point(ancienX, ancienY)).setPion(new Pion(null, new Point(ancienX, ancienY), 0));
             this.cases.get(new Point(nouveauX, nouveauY)).setPion(pionRouge);
             pionRouge.setPosition(new Point(nouveauX, nouveauY));
             this.pionsNoirs.remove(pionNoir);
@@ -351,7 +355,7 @@ public class Jeu {
                     break;
                 }
             }
-            this.cases.get(new Point(ancienX, ancienY)).setPion(null);
+            this.cases.get(new Point(ancienX, ancienY)).setPion(new Pion(null, new Point(ancienX, ancienY), 0));
             this.cases.get(new Point(nouveauX, nouveauY)).setPion(pionNoir);
             pionNoir.setPosition(new Point(nouveauX, nouveauY));
             this.pionsRouges.remove(pionRouge);

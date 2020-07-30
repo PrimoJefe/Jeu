@@ -48,7 +48,7 @@ class Client {
                     jeu = new Jeu(board, true);
 
                     System.out.println("Nouvelle partie! Vous jouer blanc, entrez votre premier coup : ");
-                    Noeud racine = new Noeud(jeu.getPlateau(), 0);
+                    Noeud racine = new Noeud(jeu.getCases(), 0, jeu.getPionsRouges(), jeu.getPionsNoirs());
                     Minmax minmax = new Minmax(racine);
                     String nextMove = minmax.findPositionChange(jeu, racine, PROFONDEUR, jeu.getMaCouleur());
                     System.out.println("Mon coup : " + nextMove);
@@ -80,7 +80,7 @@ class Client {
                         }
                     }
                     jeu = new Jeu(board, false);
-                    jeu.afficherPlateau(jeu.getPlateau());
+                    //jeu.afficherPlateau(jeu.getPlateau());
                 }
 
                 // Le serveur demande le prochain coup
@@ -98,7 +98,7 @@ class Client {
                     System.out.println("Entrez votre coup : ");
 
 
-                    Noeud racine = new Noeud(jeu.getPlateau(), 0);
+                    Noeud racine = new Noeud(jeu.getCases(), 0, jeu.getPionsRouges(), jeu.getPionsNoirs());
                     Minmax minmax = new Minmax(racine);
                     String nextMove = minmax.findPositionChange(jeu, racine,PROFONDEUR,jeu.getMaCouleur());
                     System.out.println("Mon coup : " + nextMove);
@@ -111,7 +111,7 @@ class Client {
                 // Le dernier coup est invalide
                 if(cmd == '4'){
                     System.out.println("Coup invalide, entrez un nouveau coup : ");
-                    Noeud racine = new Noeud(jeu.getPlateau(), 0);
+                    Noeud racine = new Noeud(jeu.getCases(), 0, jeu.getPionsRouges(), jeu.getPionsNoirs());
                     Minmax minmax = new Minmax(racine);
                     String nextMove = minmax.findPositionChange(jeu, racine,PROFONDEUR,jeu.getMaCouleur());
                     System.out.println("Mon coup : " + nextMove);
