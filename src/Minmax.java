@@ -25,17 +25,13 @@ public class Minmax {
         int i = 0;
 
         if (profondeur == 0) {
-            /*i++;
-            System.out.println("iii" + i);
             int valeur = jeu.getValue(noeudEnfant.getCases());
             noeud.setScore(valeur);
-            i++;
-            System.out.println("iii" + i);*/
-            Random r = new Random();
-            int low = 0;
-            int high = 100;
-            int result = r.nextInt(high-low) + low;
-            noeud.setScore(result);
+//            Random r = new Random();
+//            int low = 0;
+//            int high = 100;
+//            int result = r.nextInt(high-low) + low;
+//            noeud.setScore(result);
             return noeud;
         }
 
@@ -83,9 +79,9 @@ public class Minmax {
 
                 alpha = Math.max(alpha, noeudMax.getScore());
 
-                /*if (beta <= alpha) {
+                if (beta <= alpha) {
                     break;
-                }*/
+                }
             }
             return (new Noeud(temp.getCases(), maxEval, temp.getpionsRouges(), temp.getpionsNoirs()));
         }
@@ -127,9 +123,9 @@ public class Minmax {
 
                 beta = Math.min(beta, noeudMin.getScore());
 
-                /*if (beta <= alpha) {
+                if (beta <= alpha) {
                     break;
-                }*/
+                }
             }
             return (new Noeud(temp.getCases(), minEval, temp.getpionsRouges(), temp.getpionsNoirs()));
         }

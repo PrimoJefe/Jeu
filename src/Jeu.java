@@ -6,6 +6,21 @@ import java.util.Map;
 
 public class Jeu implements Cloneable{
 
+    private int victoire = 500000;
+    private int presqueGagne = 10000;
+    private int valeurPiece = 1300;
+    private int pieceDanger = 10;
+    private int pieceGrandDanger = 100;
+    private int pieceValeurAttack = 50;
+    private int pieceValeurProtection = 65;
+    private int pieceConnectionH = 35;
+    private int pieceConnectionV = 15;
+    private int pieceTrouColonne = 20;
+    private int pieceMaison = 150;
+    private int directionRouge = 0;
+    private int directionNoir = 0;
+
+
     private HashMap<Point, Case> cases;
     private HashMap<Point, Case> copie;
     //private Integer[][] plateau;
@@ -83,21 +98,41 @@ public class Jeu implements Cloneable{
         }
     }
 
-    public int getValue(Map<Point, Case> cases){
-        int victoire = 100;
+    public int getValue(Integer[][] board){
+
+
         boolean victoireNoir = false;
         boolean victoireRouge = false;
         int piecesNoir = 0;
         int piecesRouges = 0;
         int value = 0;
-        for (int x= 0; x < 8; x++){
-            for (int y = 0; y< 8; y++){
-                if (cases.get(new Point(x,y)).getPion() == null) continue;
-                if (cases.get(new Point(x,y)).getPion().getCouleur()) // ROUGE MAX
+        int homeValue = 0;
+        int valeurDanger = 10;
+
+
+        for (int ligne= 0; ligne < 8; ligne++){
+            for (int colonne = 0; colonne< 8; colonne++){
+                if (board[ligne][colonne]==0) continue;
+                if (board[ligne][colonne] ==4) // ROUGE MAX
                 {
                     piecesRouges++;
-                    value += getPieceValue(cases,x, y,true);
-                    if(y ==0){victoireRouge = true;}
+                    value += getPieceValue(board,ligne, colonne,4);
+                    if(ligne == 0){victoireRouge = true;}
+                    if(ligne == 7){
+                        value += pieceMaison;
+                    }
+
+                    //trouver colonne vide
+                    int nbColonneVide = 0;
+                    for (int i= 0; i < 8; i++){
+                        int nbPiontEnemiColonne = 0;
+                        for (int j = 0; j< 8; j++){
+                            if (board[j][i]==2){nbPiontEnemiColonne++;}
+                        }
+                        if (nbPiontEnemiColonne == 0){nbColonneVide++;}
+                    }
+                    if (nbColonneVide>0){value+=pieceTrouColonne;}
+//                    if(ligne == 1 || ligne == 2){value += valeurDanger;}
                     //if(y == 0){Value += HomeGroundValue;}
 //                    if {(column > 0) ThreatA = (board[GetPosition(y - 1, 7).NoPieceOnSquare);}
 //                    if (column < 7) ThreatB = (board.GetPosition(y + 1, 7).NoPieceOnSquare);
@@ -106,8 +141,20 @@ public class Jeu implements Cloneable{
                 } else{ // NOIR MIN
                     // comme rouge
                     piecesNoir++;
-                    value += getPieceValue(cases,x, y,false);
-                    if(y ==7){victoireNoir = true;}
+                    value += getPieceValue(board,ligne, colonne,2);
+                    if(ligne ==7){victoireNoir = true;}
+                    if(ligne == 0){value -= pieceMaison;}
+//                    if(ligne == 6 || ligne == 5){value -= valeurDanger;}
+                    //trouver colonne vide
+                    int nbColonneVide = 0;
+                    for (int i= 0; i < 8; i++){
+                        int nbPiontEnemiColonne = 0;
+                        for (int j = 0; j< 8; j++){
+                            if (board[j][i]==4){nbPiontEnemiColonne++;}
+                        }
+                        if (nbPiontEnemiColonne == 0){nbColonneVide++;}
+                    }
+                    if (nbColonneVide>0){value-=pieceTrouColonne;}
                 }
             }
         }
@@ -122,162 +169,196 @@ public class Jeu implements Cloneable{
         return value;
     }
 
-    public int getPieceValue(Map<Point, Case> cases, int row, int column, Boolean team)
-    {
-        int value = 0;
+    public int getPieceValue(Map<Point, Case> cases, int row, int column, boolean team) {
+        int value = valeurPiece;
+        int coupPossibles = 0;
+        boolean vulnerable = false;
+        boolean defendu = false;
+        boolean connecterH = false;
+        boolean connecterV = false;
+        boolean gagnant = false;
+
 
         // add connections value//
 
-        if (team == false){ //NOIR MIN
-            // add to the value the protected value
+        if (!team){ //NOIR MIN
+            boolean adversaire = true;
+
+            if (row == 7){gagnant = true;}
+
+            if (column > 0 && cases.get(new Point(row, column - 1)).getPion() != null) {
+                if (cases.get(new Point(row, column - 1)).getPion().getCouleur() == team) {
+                    connecterH = true;}
+            }
+
+            if (column < 7 && cases.get(new Point(row, column + 1)).getPion() != null) {
+                if (cases.get(new Point(row, column + 1)).getPion().getCouleur() == team) {
+                    connecterH = true;}
+            }
+
+            if (row > 0 && cases.get(new Point(row - 1, column)).getPion() != null) {
+                if (cases.get(new Point(row - 1, column)).getPion().getCouleur() == team) {
+                    connecterV = true;}
+            }
+
+            if (row < 7 && cases.get(new Point(row + 1, column)).getPion() != null) {
+                if (cases.get(new Point(row + 1, column)).getPion().getCouleur() == team) {
+                    connecterV = true;}
+            }
+
+            if (row > 0){
+                if(column>0 && cases.get(new Point(row - 1, column - 1)).getPion() != null){
+                    if(cases.get(new Point(row - 1, column - 1)).getPion().getCouleur()==team){defendu = true;}
+                }
+                if(column<7 && cases.get(new Point(row - 1, column + 1)).getPion() != null){
+                    if(cases.get(new Point(row - 1, column + 1)).getPion().getCouleur()==team){defendu = true;}
+                }
+            }
+            if (row < 7){
+                if(column>0 && cases.get(new Point(row + 1, column - 1)).getPion() != null){
+                    if(cases.get(new Point(row + 1, column - 1)).getPion().getCouleur()==adversaire){vulnerable = true;}
+                }
+                if(column<7 && cases.get(new Point(row + 1, column + 1)).getPion() != null){
+                    if(cases.get(new Point(row + 1, column + 1)).getPion().getCouleur()==adversaire){vulnerable = true;}
+                }
+            }
+
+            // facteur mobile
             if (row > 0 && column > 0 && column < 7){
-                if(cases.get(new Point(row - 1, column - 1)).getPion().getCouleur() == team){value -= 5;}
-                if(cases.get(new Point(row - 1, column + 1)).getPion().getCouleur() == team){value -= 5;}
-            }
-            // evaluate attack
-            if (row < 7 && column > 0 && column < 7){
-                if(cases.get(new Point(row + 1, column - 1)).getPion().getCouleur() != team){value += 5;}
-                if(cases.get(new Point(row + 1, column + 1)).getPion().getCouleur() != team){value += 5;}
+                if(cases.get(new Point(row + 1, column - 1)).getPion() == null){coupPossibles=coupPossibles+1;}
+                if(cases.get(new Point(row + 1, column + 1)).getPion() == null){coupPossibles=coupPossibles+1;}
+                if(cases.get(new Point(row +1, column)).getPion() == null){coupPossibles=coupPossibles+1;}
             }
 
-            // evaluate block
-            if(row <= 5 && column > 0 && column < 7){
-                if(cases.get(new Point(row + 2, column - 1)).getPion().getCouleur() != team){value -= 5;}
-                if(cases.get(new Point(row + 2, column)).getPion().getCouleur() != team){value -= 5;}
-                if(cases.get(new Point(row + 2, column + 1)).getPion().getCouleur() != team){value -= 5;}
+
+            if (gagnant){
+                value+= victoire;
+            }
+            if (connecterH){value += pieceConnectionH;}
+//            if (connecterV){value += pieceConnectionV;}
+            if (defendu){value += pieceValeurProtection;}
+            if (vulnerable){value -= pieceValeurAttack;}
+
+            if (vulnerable && !defendu){value -= pieceValeurAttack*2;}
+
+            if (defendu){
+                if (row == 5) {
+                    value += pieceDanger;
+                }
+                else if (row == 6){
+                    value += pieceGrandDanger;
+                }
             }
 
-            // mobility feature
-            // Value += possibleMoves;
+            if (!vulnerable && row==6){
+                value+=victoire;
+            }
 
-            // evalate distance to goal
-            value = value*(row+1);
+            value += coupPossibles*2;
+            value += row * pieceDanger;
+            value = value*-1;
 
         }
 
-        else if(team == true){ //rouge MAX
-            // add to the value the protected value
-            if (row < 7 && column > 0 && column < 7){
-                if(cases.get(new Point(row + 1, column - 1)).getPion().getCouleur() == team){value += 5;}
-                if(cases.get(new Point(row + 1, column + 1)).getPion().getCouleur() == team){value += 5;}
-            }
-            // evaluate attack
-            if (row > 0 && column > 0 && column < 7){
-                if(cases.get(new Point(row - 1, column - 1)).getPion().getCouleur() !=team ){value -= 5;}
-                if(cases.get(new Point(row - 1, column + 1)).getPion().getCouleur() != team){value -= 5;}
-            }
-            // evaluate block
-            if(row >= 2 && column > 0 && column < 7){
-                if(cases.get(new Point(row + 2, column - 1)).getPion().getCouleur() != team){value += 5;}
-                if(cases.get(new Point(row + 2, column)).getPion().getCouleur() != team){value += 5;}
-                if(cases.get(new Point(row + 2, column + 1)).getPion().getCouleur() != team){value += 5;}
-            }
-            // mobility feature
-            // Value += possibleMoves;
+        else { //rouge MAX
+            int adversaire = 2;
 
-            // evaluante distance to goal
-            value = value*(8-row);
+
+            if (row ==0){gagnant = true;}
+
+            if (column > 0 && cases.get(new Point(row, column - 1)).getPion() != null) {
+                if (board[row][column - 1] == team) {
+                    connecterH = true;
+                }
+            }
+
+            if (column < 7 && cases.get(new Point(row, column - 1)).getPion() != null) {
+                if (board[row][column + 1] == team) {
+                    connecterH = true;
+                }
+            }
+
+            if (row > 0 && cases.get(new Point(row, column - 1)).getPion() != null) {
+                if (board[row - 1][column] == team) {
+                    connecterV = true;
+                }
+            }
+
+            if (row < 7 && cases.get(new Point(row, column - 1)).getPion() != null) {
+                if (board[row + 1][column] == team) {
+                    connecterV = true;
+                }
+            }
+
+            if (row < 7) {
+                if (column > 0 && cases.get(new Point(row, column - 1)).getPion() != null) {
+                    if (board[row + 1][column - 1] == team) {
+                        defendu = true;
+                    }
+                }
+                if (column < 7 && cases.get(new Point(row, column - 1)).getPion() != null) {
+                    if (board[row + 1][column + 1] == team) {
+                        defendu = true;
+                    }
+                }
+            }
+            if (row > 0) {
+                if (column > 0 && cases.get(new Point(row, column - 1)).getPion() != null) {
+                    if (board[row - 1][column - 1] == adversaire) {
+                        vulnerable = true;
+                    }
+                }
+                if (column < 7 && cases.get(new Point(row, column - 1)).getPion() != null) {
+                    if (board[row - 1][column + 1] == adversaire) {
+                        vulnerable = true;
+                    }
+                }
+            }
+            // facteur mobile
+            if (row > 0 && column > 0 && column < 7){
+                if(cases.get(new Point(row - 1, column - 1)).getPion() == null){coupPossibles=coupPossibles+1;}
+                if(cases.get(new Point(row - 1, column + 1)).getPion() == null){coupPossibles=coupPossibles+1;}
+                if(cases.get(new Point(row - 1, column)).getPion() == null){coupPossibles=coupPossibles+1;}
+            }
+            value += coupPossibles*2;
+
+            if (gagnant){
+                value+= victoire;
+            }
+            if (connecterH) {
+                value += pieceConnectionH;
+            }
+            if (connecterV) {
+//                value += pieceConnectionV;
+            }
+            if (defendu) {
+                value += pieceValeurProtection;
+            }
+            if (vulnerable) {
+                value -= pieceValeurAttack;
+            }
+
+            if (vulnerable && !defendu) {
+                value -= 2*pieceValeurAttack;
+            }
+
+            if (defendu) {
+                if (row == 2) {
+                    value += pieceDanger;
+                } else if (row == 1) {
+                    value += pieceGrandDanger;
+                }
+            }
+
+            if (!vulnerable && row==1){
+                value+=victoire;
+            }
+
+            value += row * pieceDanger;
         }
+
         return value;
     }
-
-//    public int getValue(Integer[][] board){
-//        int victoire = 100;
-//        boolean victoireNoir = false;
-//        boolean victoireRouge = false;
-//        int piecesNoir = 0;
-//        int piecesRouges = 0;
-//        int value = 0;
-//        for (int x= 0; x < 8; x++){
-//            for (int y = 0; y< 8; y++){
-//                if (board[x][y]==0) continue;
-//                if (board[x][y] ==4) // ROUGE MAX
-//                {
-//                    piecesRouges++;
-//                    value += getPieceValue(board,x, y,4);
-//                    if(y ==0){victoireRouge = true;}
-//                    //if(y == 0){Value += HomeGroundValue;}
-////                    if {(column > 0) ThreatA = (board[GetPosition(y - 1, 7).NoPieceOnSquare);}
-////                    if (column < 7) ThreatB = (board.GetPosition(y + 1, 7).NoPieceOnSquare);
-////                    if (ThreatA && ThreatB) // almost win
-////                        board.Value += PieceAlmostWinValue;
-//                } else{ // NOIR MIN
-//                    // comme rouge
-//                    piecesNoir++;
-//                    value += getPieceValue(board,x, y,2);
-//                    if(y ==7){victoireNoir = true;}
-//                }
-//            }
-//        }
-//        // if no more material available
-//        if (piecesRouges == 0) victoireNoir = true;
-//        if (piecesNoir == 0) victoireRouge = true;
-//
-//        // winning positions
-//        if (victoireNoir){value -= victoire;}
-//        if (victoireRouge){value += victoire;}
-//
-//        return value;
-//    }
-//
-//    public int getPieceValue(Integer[][] board, int row, int column, int team)
-//    {
-//        int value = 0;
-//
-//        // add connections value//
-//
-//        if (team == 2){ //NOIR MIN
-//            // add to the value the protected value
-//            if (row > 0 && column > 0 && column < 7){
-//                if(board[row-1][column-1]==team){value -= 5;}
-//                if(board[row-1][column+1]==team){value -= 5;}
-//            }
-//            // evaluate attack
-//            if (row < 7 && column > 0 && column < 7){
-//                if(board[row+1][column-1]!=team){value += 5;}
-//                if(board[row+1][column+1]!=team){value += 5;}
-//            }
-//
-//            // evaluate block
-//            if(row <= 5 && column > 0 && column < 7){
-//                if(board[row+2][column-1]!=team){value -= 5;}
-//                if(board[row+2][column]!=team){value -= 5;}
-//                if(board[row+2][column-1]!=team){value -= 5;}
-//            }
-//
-//            // mobility feature
-//            // Value += possibleMoves;
-//
-//            // evalate distance to goal
-//            value = value*(row+1);
-//
-//        }
-//
-//        else{ //rouge MAX
-//            // add to the value the protected value
-//            if (row < 7 && column > 0 && column < 7){
-//                if(board[row+1][column-1]==team){value += 5;}
-//                if(board[row+1][column+1]==team){value += 5;}
-//            }
-//            // evaluate attack
-//            if (row > 0 && column > 0 && column < 7){
-//                if(board[row-1][column-1]!=team){value -= 5;}
-//                if(board[row-1][column+1]!=team){value -= 5;}
-//            }
-//            // evaluate block
-//            if(row >= 2 && column > 0 && column < 7){
-//                if(board[row-2][column-1]!=team){value += 5;}
-//                if(board[row-2][column]!=team){value += 5;}
-//                if(board[row-2][column-1]!=team){value += 5;}
-//            }
-//            // mobility feature
-//            // Value += possibleMoves;
-//
-//            // evaluante distance to goal
-//            value = value*(8-row);
-//        }
-//        return value;
-//    }
 
     public ArrayList<Pion> cloneListe(ArrayList<Pion> pions){
         ArrayList<Pion> clone = new ArrayList<Pion>();
