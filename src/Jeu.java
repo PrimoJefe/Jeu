@@ -56,59 +56,6 @@ public class Jeu {
             }
         }
     }
-//    public Jeu(String configuration) {
-//        /*for(int i = 0; i < 8; i++) {
-//            for(int j = 0; j < 8; j++) {
-//                this.plateau[j][i] = plateau[i][j];
-//            }
-//        }*/
-//        this.plateau = new Integer[8][8];
-//        if(maCouleur) {
-//            this.couleurAdverse = false;
-//        }
-//        else {
-//            this.couleurAdverse = true;
-//        }
-//
-//        this.pionsNoirs = new ArrayList<Pion>();
-//        this.pionsRouges = new ArrayList<Pion>();
-//
-//       if (Integer.parseInt(String.valueOf(configuration.charAt(0))) == 1) {
-//            this.maCouleur = true;
-//            this.couleurAdverse = false;
-//        }
-//       else {
-//            this.maCouleur = false;
-//            this.couleurAdverse = true;
-//       }
-//
-//        int i = 1;
-//        int direction = 1;
-//        for (int x = 0; x < this.plateau.length; x++) {
-//            for (int y = 0; y < this.plateau.length; y++) {
-//                int valeur = Integer.parseInt(String.valueOf(configuration.charAt(i)));
-//                this.plateau[x][y] = valeur;
-//                Point position = new Point(x,y);
-//                if (x > (plateau.length-1)/2) {
-//                    direction = -1;
-//                }
-//
-//                if (valeur == 4) {
-//                    Pion pion = new Pion(true, position, direction);
-//                    pionsRouges.add(pion);
-//                }
-//                else if (valeur == 2) {
-//                    Pion pion = new Pion(false, position, direction);
-//                    pionsNoirs.add(pion);
-//                }
-//                i++;
-//            }
-//        }
-//    }
-
-//    public Integer[][] getPlateau() {
-//        return this.plateau;
-//    }
     public boolean getMaCouleur() { return this.maCouleur; }
     public boolean getCouleurAdverse() { return this.couleurAdverse; }
 
@@ -120,10 +67,6 @@ public class Jeu {
         return pionsNoirs;
     }
 
-//    public void setPlateau(Integer[][] nouvelEtat) {
-//        this.plateau = nouvelEtat;
-//    }
-
     public void afficherPlateau(Integer[][] plateau) {
         for(int i = 0; i < plateau.length; i++){
             System.out.print("\n");
@@ -133,7 +76,7 @@ public class Jeu {
         }
     }
 
-    public int getValue(Integer[][] board){
+    public int getValue(Map<Point, Case> cases){
         int victoire = 100;
         boolean victoireNoir = false;
         boolean victoireRouge = false;
@@ -142,11 +85,11 @@ public class Jeu {
         int value = 0;
         for (int x= 0; x < 8; x++){
             for (int y = 0; y< 8; y++){
-                if (board[x][y]==0) continue;
-                if (board[x][y] ==4) // ROUGE MAX
+                if (cases.get(new Point(x,y)).getPion() == null) continue;
+                if (cases.get(new Point(x,y)).getPion().getCouleur()) // ROUGE MAX
                 {
                     piecesRouges++;
-                    value += getPieceValue(board,x, y,4);
+                    value += getPieceValue(cases,x, y,true);
                     if(y ==0){victoireRouge = true;}
                     //if(y == 0){Value += HomeGroundValue;}
 //                    if {(column > 0) ThreatA = (board[GetPosition(y - 1, 7).NoPieceOnSquare);}
@@ -156,7 +99,7 @@ public class Jeu {
                 } else{ // NOIR MIN
                     // comme rouge
                     piecesNoir++;
-                    value += getPieceValue(board,x, y,2);
+                    value += getPieceValue(cases,x, y,false);
                     if(y ==7){victoireNoir = true;}
                 }
             }
@@ -172,29 +115,29 @@ public class Jeu {
         return value;
     }
 
-    public int getPieceValue(Integer[][] board, int row, int column, int team)
+    public int getPieceValue(Map<Point, Case> cases, int row, int column, boolean team)
     {
         int value = 0;
 
         // add connections value//
 
-        if (team == 2){ //NOIR MIN
+        if (!team){ //NOIR MIN
             // add to the value the protected value
             if (row > 0 && column > 0 && column < 7){
-                if(board[row-1][column-1]==team){value -= 5;}
-                if(board[row-1][column+1]==team){value -= 5;}
+                if(cases.get(new Point(row - 1, column - 1)).getPion().getCouleur() == team){value -= 5;}
+                if(cases.get(new Point(row - 1, column + 1)).getPion().getCouleur() == team){value -= 5;}
             }
             // evaluate attack
             if (row < 7 && column > 0 && column < 7){
-                if(board[row+1][column-1]!=team){value += 5;}
-                if(board[row+1][column+1]!=team){value += 5;}
+                if(cases.get(new Point(row + 1, column - 1)).getPion().getCouleur() != team){value += 5;}
+                if(cases.get(new Point(row + 1, column + 1)).getPion().getCouleur() != team){value += 5;}
             }
 
             // evaluate block
             if(row <= 5 && column > 0 && column < 7){
-                if(board[row+2][column-1]!=team){value -= 5;}
-                if(board[row+2][column]!=team){value -= 5;}
-                if(board[row+2][column-1]!=team){value -= 5;}
+                if(cases.get(new Point(row + 2, column - 1)).getPion().getCouleur() != team){value -= 5;}
+                if(cases.get(new Point(row + 2, column)).getPion().getCouleur() != team){value -= 5;}
+                if(cases.get(new Point(row + 2, column + 1)).getPion().getCouleur() != team){value -= 5;}
             }
 
             // mobility feature
@@ -208,19 +151,19 @@ public class Jeu {
         else{ //rouge MAX
             // add to the value the protected value
             if (row < 7 && column > 0 && column < 7){
-                if(board[row+1][column-1]==team){value += 5;}
-                if(board[row+1][column+1]==team){value += 5;}
+                if(cases.get(new Point(row + 1, column - 1)).getPion().getCouleur() == team){value += 5;}
+                if(cases.get(new Point(row + 1, column + 1)).getPion().getCouleur() == team){value += 5;}
             }
             // evaluate attack
             if (row > 0 && column > 0 && column < 7){
-                if(board[row-1][column-1]!=team){value -= 5;}
-                if(board[row-1][column+1]!=team){value -= 5;}
+                if(cases.get(new Point(row - 1, column - 1)).getPion().getCouleur() !=team ){value -= 5;}
+                if(cases.get(new Point(row - 1, column + 1)).getPion().getCouleur() != team){value -= 5;}
             }
             // evaluate block
             if(row >= 2 && column > 0 && column < 7){
-                if(board[row-2][column-1]!=team){value += 5;}
-                if(board[row-2][column]!=team){value += 5;}
-                if(board[row-2][column-1]!=team){value += 5;}
+                if(cases.get(new Point(row + 2, column - 1)).getPion().getCouleur() != team){value += 5;}
+                if(cases.get(new Point(row + 2, column)).getPion().getCouleur() != team){value += 5;}
+                if(cases.get(new Point(row + 2, column + 1)).getPion().getCouleur() != team){value += 5;}
             }
             // mobility feature
             // Value += possibleMoves;
@@ -230,6 +173,104 @@ public class Jeu {
         }
         return value;
     }
+
+//    public int getValue(Integer[][] board){
+//        int victoire = 100;
+//        boolean victoireNoir = false;
+//        boolean victoireRouge = false;
+//        int piecesNoir = 0;
+//        int piecesRouges = 0;
+//        int value = 0;
+//        for (int x= 0; x < 8; x++){
+//            for (int y = 0; y< 8; y++){
+//                if (board[x][y]==0) continue;
+//                if (board[x][y] ==4) // ROUGE MAX
+//                {
+//                    piecesRouges++;
+//                    value += getPieceValue(board,x, y,4);
+//                    if(y ==0){victoireRouge = true;}
+//                    //if(y == 0){Value += HomeGroundValue;}
+////                    if {(column > 0) ThreatA = (board[GetPosition(y - 1, 7).NoPieceOnSquare);}
+////                    if (column < 7) ThreatB = (board.GetPosition(y + 1, 7).NoPieceOnSquare);
+////                    if (ThreatA && ThreatB) // almost win
+////                        board.Value += PieceAlmostWinValue;
+//                } else{ // NOIR MIN
+//                    // comme rouge
+//                    piecesNoir++;
+//                    value += getPieceValue(board,x, y,2);
+//                    if(y ==7){victoireNoir = true;}
+//                }
+//            }
+//        }
+//        // if no more material available
+//        if (piecesRouges == 0) victoireNoir = true;
+//        if (piecesNoir == 0) victoireRouge = true;
+//
+//        // winning positions
+//        if (victoireNoir){value -= victoire;}
+//        if (victoireRouge){value += victoire;}
+//
+//        return value;
+//    }
+//
+//    public int getPieceValue(Integer[][] board, int row, int column, int team)
+//    {
+//        int value = 0;
+//
+//        // add connections value//
+//
+//        if (team == 2){ //NOIR MIN
+//            // add to the value the protected value
+//            if (row > 0 && column > 0 && column < 7){
+//                if(board[row-1][column-1]==team){value -= 5;}
+//                if(board[row-1][column+1]==team){value -= 5;}
+//            }
+//            // evaluate attack
+//            if (row < 7 && column > 0 && column < 7){
+//                if(board[row+1][column-1]!=team){value += 5;}
+//                if(board[row+1][column+1]!=team){value += 5;}
+//            }
+//
+//            // evaluate block
+//            if(row <= 5 && column > 0 && column < 7){
+//                if(board[row+2][column-1]!=team){value -= 5;}
+//                if(board[row+2][column]!=team){value -= 5;}
+//                if(board[row+2][column-1]!=team){value -= 5;}
+//            }
+//
+//            // mobility feature
+//            // Value += possibleMoves;
+//
+//            // evalate distance to goal
+//            value = value*(row+1);
+//
+//        }
+//
+//        else{ //rouge MAX
+//            // add to the value the protected value
+//            if (row < 7 && column > 0 && column < 7){
+//                if(board[row+1][column-1]==team){value += 5;}
+//                if(board[row+1][column+1]==team){value += 5;}
+//            }
+//            // evaluate attack
+//            if (row > 0 && column > 0 && column < 7){
+//                if(board[row-1][column-1]!=team){value -= 5;}
+//                if(board[row-1][column+1]!=team){value -= 5;}
+//            }
+//            // evaluate block
+//            if(row >= 2 && column > 0 && column < 7){
+//                if(board[row-2][column-1]!=team){value += 5;}
+//                if(board[row-2][column]!=team){value += 5;}
+//                if(board[row-2][column-1]!=team){value += 5;}
+//            }
+//            // mobility feature
+//            // Value += possibleMoves;
+//
+//            // evaluante distance to goal
+//            value = value*(8-row);
+//        }
+//        return value;
+//    }
 
     public ArrayList<String> generateurMouvement(HashMap<Point, Case> cases, Point position, int direction, boolean joueur) {
         Point depart = new Point(position.x, position.y);
@@ -289,9 +330,9 @@ public class Jeu {
                     break;
                 }
             }
-            this.plateau[ancienX][ancienY] = 0;
-            this.plateau[nouveauX][nouveauY] = 4;
-            pionRouge.setPosition(nouveauX, nouveauY);
+            this.cases.get(new Point(ancienX, ancienY)).setPion(null);
+            this.cases.get(new Point(nouveauX, nouveauY)).setPion(pionRouge);
+            pionRouge.setPosition(new Point(nouveauX, nouveauY));
             this.pionsNoirs.remove(pionNoir);
 
         }
@@ -310,9 +351,9 @@ public class Jeu {
                     break;
                 }
             }
-            this.plateau[ancienX][ancienY] = 0;
-            this.plateau[nouveauX][nouveauY] = 2;
-            pionNoir.setPosition(nouveauX, nouveauY);
+            this.cases.get(new Point(ancienX, ancienY)).setPion(null);
+            this.cases.get(new Point(nouveauX, nouveauY)).setPion(pionNoir);
+            pionNoir.setPosition(new Point(nouveauX, nouveauY));
             this.pionsRouges.remove(pionRouge);
 //            afficherPlateau(this.plateau);
 //            System.out.println("\n");

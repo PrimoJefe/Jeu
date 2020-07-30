@@ -8,12 +8,14 @@ public class Noeud {
 
     private HashMap<Point, Case> cases;
     private int score;
-    private ArrayList<Pion> pionsIn;
-    private ArrayList<Pion> pionsOut;
+    private ArrayList<Pion> pionsRouges;
+    private ArrayList<Pion> pionsNoirs;
 
-    public Noeud(HashMap<Point, Case> cases, int score) {
+    public Noeud(HashMap<Point, Case> cases, int score, ArrayList<Pion> pionsRouges, ArrayList<Pion> pionsNoirs) {
         this.cases = cases;
         this.score = score;
+        this.pionsRouges = new ArrayList<Pion>(pionsRouges);
+        this.pionsNoirs = new ArrayList<Pion>(pionsNoirs);
     }
 
     public HashMap<Point, Case> getCases(){
@@ -26,5 +28,13 @@ public class Noeud {
 
     public void setScore(int score) {
         this.score = score;
+    }
+
+    public ArrayList<Pion> getpionsRouges() {
+        return pionsRouges;
+    }
+
+    public ArrayList<Pion> getpionsNoirs() {
+        return pionsNoirs;
     }
 }
