@@ -1,3 +1,4 @@
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,14 +10,19 @@ public class Noeud {
     private boolean estJoueurMax;
     private int score;
     private List<Noeud> enfants;
+    private ArrayList<Pion> pions;
 
 
-    public Noeud(Integer[][] board, int score) {
+    public Noeud(Integer[][] board, int score, ArrayList<Pion> pions) {
         this.board = board;
         this.score = score;
+        this.pions = pions;
         enfants = new ArrayList<>();
     }
 
+    public ArrayList<Pion> getPions(){
+        return this.pions;
+    }
     boolean estJoueurMax() {
         return this.estJoueurMax;
     }

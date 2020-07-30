@@ -10,7 +10,7 @@ public class Minmax {
     }
 
     public Noeud minimax(Jeu jeu, Noeud noeud, int profondeur, int alpha, int beta, boolean joueurRouge) {
-        ArrayList<Integer[][]> enfants = new ArrayList<Integer[][]>();
+        Map<Integer[][], ArrayList<Pion>> enfants = new HashMap<Integer[][], ArrayList<Pion>>();
         int eval;
         int minEval;
         int maxEval;
@@ -18,14 +18,11 @@ public class Minmax {
         if (profondeur == 0) {
             System.out.println("wait");
         }
-        Noeud noeudEnfant = new Noeud(noeud.getBoard(), noeud.getScore());
+        Noeud noeudEnfant = new Noeud(noeud.getBoard(), noeud.getScore(), noeud.getPions());
 
-        if(joueurRouge) {
-            enfants = jeu.generateurMouvement(noeud.getBoard(), jeu.getDirectionRouge());
-        }
-        else {
-            enfants = jeu.generateurMouvement(noeud.getBoard(), jeu.getDirectionNoir());
-        }
+
+        enfants = jeu.generateurMouvement(noeud.getBoard(), noeud.getPions(), joueurRouge);
+
 //        System.out.println("---------------------------------");
 //        for(Integer[][] enfant : enfants) {
 //            jeu.afficherPlateau(enfant);
@@ -46,10 +43,10 @@ public class Minmax {
 
         if (joueurRouge) {
             maxEval = -1000000000;
-            Noeud temp = new Noeud(noeud.getBoard(), noeud.getScore());
+            Noeud temp = new Noeud(noeud.getBoard(), noeud.getScore(), noeud.getPions());
             if (enfants.size()>0) {
-                for (Integer[][] enfant : enfants) {
-                    noeudEnfant = new Noeud(enfant, maxEval);
+                for (Integer[][] enfant : enfants.keySet()) {
+                    noeudEnfant = new Noeud(enfant, maxEval, enfants.get(enfant));
                     Noeud noeudMax = minimax(jeu, noeudEnfant, profondeur - 1, alpha, beta, false);
                     eval = noeudMax.getScore();
 
@@ -70,15 +67,15 @@ public class Minmax {
                 noeud.setScore(valeur);
                 return noeud;
             }
-            return (new Noeud(temp.getBoard(), maxEval));
+            return (new Noeud(temp.getBoard(), maxEval, temp.getPions()));
         }
 
         else {
             minEval = 1000000000;
-            Noeud temp = new Noeud(noeud.getBoard(), noeud.getScore());
+            Noeud temp = new Noeud(noeud.getBoard(), noeud.getScore(), noeud.getPions());
             if (enfants.size()>0) {
-                for (Integer[][] enfant : enfants) {
-                    noeudEnfant = new Noeud(enfant, minEval);
+                for (Integer[][] enfant : enfants.keySet()) {
+                    noeudEnfant = new Noeud(enfant, minEval, enfants.get(enfant));
                     Noeud noeudMin = minimax(jeu, noeudEnfant, profondeur - 1, alpha, beta, true);
                     eval = noeudMin.getScore();
 
@@ -106,7 +103,7 @@ public class Minmax {
                 noeud.setScore(valeur);
                 return noeud;
             }
-            return (new Noeud(temp.getBoard(), minEval));
+            return (new Noeud(temp.getBoard(), minEval, temp.getPions()));
         }
     }
 

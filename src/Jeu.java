@@ -1,5 +1,7 @@
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class Jeu {
@@ -9,6 +11,7 @@ public class Jeu {
     private boolean couleurAdverse;
     private ArrayList<Pion> pionsRouges;
     private ArrayList<Pion> pionsNoirs;
+    private ArrayList<Pion> pions;
 
     private int victoire = 500000;
     private int presqueGagne = 10000;
@@ -40,7 +43,7 @@ public class Jeu {
 
         this.pionsNoirs = new ArrayList<Pion>();
         this.pionsRouges = new ArrayList<Pion>();
-
+        this.pions = new ArrayList<Pion>();
 
         int i = 1;
         int direction = 1;
@@ -55,11 +58,13 @@ public class Jeu {
                 if (valeur == 4) {
                     Pion pion = new Pion(true, position, direction);
                     pionsRouges.add(pion);
+                    pions.add(pion);
                     this.directionRouge = direction;
                 }
                 else if (valeur == 2) {
                     Pion pion = new Pion(false, position, direction);
                     pionsNoirs.add(pion);
+                    pions.add(pion);
                     this.directionNoir = direction;
                 }
                 i++;
@@ -80,6 +85,10 @@ public class Jeu {
 
     public ArrayList<Pion> getPionsNoirs() {
         return pionsNoirs;
+    }
+
+    public ArrayList<Pion> getPions() {
+        return pions;
     }
 
     public void setPlateau(Integer[][] nouvelEtat) {
@@ -357,15 +366,22 @@ public class Jeu {
         return value;
     }
 
-    public ArrayList<Integer[][]> generateurMouvement(Integer[][] plateau, ArrayList<Pion> pions) {
+    public Map<Integer[][], ArrayList<Pion>> generateurMouvement(Integer[][] plateau, ArrayList<Pion> pions, Boolean joueur) {
         Integer[][] plateauPossible = copierTableau(plateau);
-        ArrayList<Integer[][]> mouvementsPossibles = new ArrayList<Integer[][]>();
+        Map<Integer[][], ArrayList<Pion>> mouvementsPossibles = new HashMap<Integer[][], ArrayList<Pion>>();
+        //ArrayList<Pion> pionsTemp = new ArrayList<Pion>(pions);
+        ArrayList<Pion> pionsTemp = new ArrayList<>();
+        for(Pion test : pions) {
+            pionsTemp.add(test);
+        }
+
 
         for (Pion pion : pions) {
             int ligne = pion.getPosition().x;
             int colonne = pion.getPosition().y;
             int avancement = ligne + pion.getDirection();
             int couleur;
+            Point depart = new Point(ligne, colonne);
 
             if (pion.getCouleur() == true) {
                 couleur = 4;
@@ -373,39 +389,119 @@ public class Jeu {
             else {
                 couleur = 2;
             }
+            if(pion.getCouleur() == joueur) {
+                if((pion.getDirection() < 0 && avancement >= 0) ||
+                        (pion.getDirection() > 0 && avancement < plateau.length)){
 
-            if (plateau[avancement][colonne] == 0) {
-                plateauPossible[avancement][colonne] = plateau[ligne][colonne];
-                plateauPossible[ligne][colonne] = 0;
-                mouvementsPossibles.add(plateauPossible);
-                plateauPossible = copierTableau(plateau);
-            }
-            if(colonne != 0) {
-                if(plateau[avancement][colonne - 1] == 0) {
-                    plateauPossible[avancement][colonne - 1] = plateau[ligne][colonne];
-                    plateauPossible[ligne][colonne] = 0;
-                    mouvementsPossibles.add(plateauPossible);
-                    plateauPossible = copierTableau(plateau);
-                }
-                else if (plateau[avancement][colonne - 1] != couleur) {
-                    plateauPossible[avancement][colonne - 1] = plateau[ligne][colonne];
-                    plateauPossible[ligne][colonne] = 0;
-                    mouvementsPossibles.add(plateauPossible);
-                    plateauPossible = copierTableau(plateau);
-                }
-            }
-            if(colonne != plateau.length - 1) {
-                if(plateau[avancement][colonne + 1] == 0) {
-                    plateauPossible[avancement][colonne + 1] = plateau[ligne][colonne];
-                    plateauPossible[ligne][colonne] = 0;
-                    mouvementsPossibles.add(plateauPossible);
-                    plateauPossible = copierTableau(plateau);
-                }
-                else if (plateau[avancement][colonne + 1] != couleur) {
-                    plateauPossible[avancement][colonne + 1] = plateau[ligne][colonne];
-                    plateauPossible[ligne][colonne] = 0;
-                    mouvementsPossibles.add(plateauPossible);
-                    plateauPossible = copierTableau(plateau);
+                    if (plateau[avancement][colonne] == 0) {
+                        plateauPossible[avancement][colonne] = plateau[ligne][colonne];
+                        plateauPossible[ligne][colonne] = 0;
+
+                        for(Pion pionTemp : pionsTemp) {
+                            if(pionTemp.getPosition().x == ligne && pionTemp.getPosition().y == colonne){
+                                pionTemp.setPosition(avancement, colonne);
+                            }
+                        }
+
+                        mouvementsPossibles.put(plateauPossible, pionsTemp);
+                        plateauPossible = copierTableau(plateau);
+                        //pionsTemp = new ArrayList<Pion>(pions);
+                        pionsTemp = new ArrayList<>();
+                        for(Pion test : pions) {
+                            pionsTemp.add(test);
+                        }
+                    }
+                    if(colonne != 0) {
+                        if(plateau[avancement][colonne - 1] == 0) {
+                            plateauPossible[avancement][colonne - 1] = plateau[ligne][colonne];
+                            plateauPossible[ligne][colonne] = 0;
+
+                            for(Pion pionTemp : pionsTemp) {
+                                if(pionTemp.getPosition().x == ligne && pionTemp.getPosition().y == colonne){
+                                    pionTemp.setPosition(avancement, colonne - 1);
+                                }
+                            }
+
+                            mouvementsPossibles.put(plateauPossible, pionsTemp);
+                            plateauPossible = copierTableau(plateau);
+                            //pionsTemp = new ArrayList<Pion>(pions);
+                            pionsTemp = new ArrayList<>();
+                            for(Pion test : pions) {
+                                pionsTemp.add(test);
+                            }
+                        }
+                        else if (plateau[avancement][colonne - 1] != couleur) {
+                            plateauPossible[avancement][colonne - 1] = plateau[ligne][colonne];
+                            plateauPossible[ligne][colonne] = 0;
+
+                            Pion toDelete = new Pion();
+                            for(Pion pionTemp : pionsTemp) {
+                                if(pionTemp.getPosition().x == avancement && pionTemp.getPosition().y == colonne - 1){
+                                    toDelete = pion;
+                                }
+                            }
+                            pionsTemp.remove(toDelete);
+                            for(Pion pionTemp : pionsTemp) {
+                                if(pionTemp.getPosition().x == ligne && pionTemp.getPosition().y == colonne){
+                                    pionTemp.setPosition(avancement, colonne - 1);
+                                }
+                            }
+
+                            mouvementsPossibles.put(plateauPossible, pionsTemp);
+                            plateauPossible = copierTableau(plateau);
+                            //pionsTemp = new ArrayList<Pion>(pions);
+                            pionsTemp = new ArrayList<>();
+                            for(Pion test : pions) {
+                                pionsTemp.add(test);
+                            }
+                        }
+                    }
+                    if(colonne != plateau.length - 1) {
+                        if(plateau[avancement][colonne + 1] == 0) {
+                            plateauPossible[avancement][colonne + 1] = plateau[ligne][colonne];
+                            plateauPossible[ligne][colonne] = 0;
+
+                            for(Pion pionTemp : pionsTemp) {
+                                if(pionTemp.getPosition().x == ligne && pionTemp.getPosition().y == colonne){
+                                    pionTemp.setPosition(avancement, colonne + 1);
+                                }
+                            }
+
+                            mouvementsPossibles.put(plateauPossible, pionsTemp);
+                            plateauPossible = copierTableau(plateau);
+                            //pionsTemp = new ArrayList<Pion>(pions);
+                            pionsTemp = new ArrayList<>();
+                            for(Pion test : pions) {
+                                pionsTemp.add(test);
+                            }
+                        }
+                        else if (plateau[avancement][colonne + 1] != couleur) {
+                            plateauPossible[avancement][colonne + 1] = plateau[ligne][colonne];
+                            plateauPossible[ligne][colonne] = 0;
+                            Pion toDelete = new Pion();
+
+                            for(Pion pionTemp : pionsTemp) {
+                                if(pionTemp.getPosition().x == avancement && pionTemp.getPosition().y == colonne + 1){
+                                    toDelete = pion;
+                                }
+                            }
+                            pionsTemp.remove(toDelete);
+
+                            for(Pion pionTemp : pionsTemp) {
+                                if(pionTemp.getPosition().x == ligne && pionTemp.getPosition().y == colonne){
+                                    pionTemp.setPosition(avancement, colonne + 1);
+                                }
+                            }
+
+                            mouvementsPossibles.put(plateauPossible, pionsTemp);
+                            plateauPossible = copierTableau(plateau);
+                            //pionsTemp = new ArrayList<Pion>(pions);
+                            pionsTemp = new ArrayList<>();
+                            for(Pion test : pions) {
+                                pionsTemp.add(test);
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -435,15 +531,15 @@ public class Jeu {
 
         if(joueur) {
             Pion pionRouge = new Pion();
-            for(Pion pion : pionsRouges){
-                if(pion.getPosition().x == ancienX && pion.getPosition().y == ancienY) {
+            for(Pion pion : pions){
+                if(pion.getPosition().x == ancienX && pion.getPosition().y == ancienY && pion.getCouleur() == joueur) {
                     pionRouge = pion;
                     break;
                 }
             }
             Pion pionNoir = new Pion();
-            for(Pion pion : pionsNoirs) {
-                if(pion.getPosition().x == nouveauX && pion.getPosition().y == nouveauY) {
+            for(Pion pion : pions) {
+                if(pion.getPosition().x == nouveauX && pion.getPosition().y == nouveauY && pion.getCouleur() != joueur) {
                     pionNoir = pion;
                     break;
                 }
@@ -451,20 +547,20 @@ public class Jeu {
             this.plateau[ancienX][ancienY] = 0;
             this.plateau[nouveauX][nouveauY] = 4;
             pionRouge.setPosition(nouveauX, nouveauY);
-            this.pionsNoirs.remove(pionNoir);
+            this.pions.remove(pionNoir);
 
         }
         else {
             Pion pionNoir = new Pion();
-            for(Pion pion : pionsNoirs){
-                if(pion.getPosition().x == ancienX && pion.getPosition().y == ancienY) {
+            for(Pion pion : pions){
+                if(pion.getPosition().x == ancienX && pion.getPosition().y == ancienY && pion.getCouleur() == joueur) {
                     pionNoir = pion;
                     break;
                 }
             }
             Pion pionRouge = new Pion();
-            for(Pion pion : pionsRouges) {
-                if(pion.getPosition().x == nouveauX && pion.getPosition().y == nouveauY) {
+            for(Pion pion : pions) {
+                if(pion.getPosition().x == nouveauX && pion.getPosition().y == nouveauY && pion.getCouleur() != joueur) {
                     pionRouge = pion;
                     break;
                 }
@@ -472,7 +568,7 @@ public class Jeu {
             this.plateau[ancienX][ancienY] = 0;
             this.plateau[nouveauX][nouveauY] = 2;
             pionNoir.setPosition(nouveauX, nouveauY);
-            this.pionsRouges.remove(pionRouge);
+            this.pions.remove(pionRouge);
 //            afficherPlateau(this.plateau);
 //            System.out.println("\n");
         }

@@ -48,7 +48,7 @@ class Client {
                     jeu = new Jeu(board, true);
 
                     System.out.println("Nouvelle partie! Vous jouer blanc, entrez votre premier coup : ");
-                    Noeud racine = new Noeud(jeu.getPlateau(), 0);
+                    Noeud racine = new Noeud(jeu.getPlateau(), 0, jeu.getPions());
                     Minmax minmax = new Minmax(racine);
                     String nextMove = minmax.findPositionChange(jeu, racine, PROFONDEUR, jeu.getMaCouleur());
                     System.out.println("Mon coup : " + nextMove);
@@ -98,20 +98,21 @@ class Client {
                     System.out.println("Entrez votre coup : ");
 
 
-                    Noeud racine = new Noeud(jeu.getPlateau(), 0);
+                    Noeud racine = new Noeud(jeu.getPlateau(), 0, jeu.getPions());
                     Minmax minmax = new Minmax(racine);
                     String nextMove = minmax.findPositionChange(jeu, racine,PROFONDEUR,jeu.getMaCouleur());
                     System.out.println("Mon coup : " + nextMove);
 
                     output.write(nextMove.getBytes(),0,nextMove.length());
-                    output.flush();
                     jeu.modifierPlateau(nextMove, jeu.getMaCouleur());
+                    output.flush();
+
 
                 }
                 // Le dernier coup est invalide
                 if(cmd == '4'){
                     System.out.println("Coup invalide, entrez un nouveau coup : ");
-                    Noeud racine = new Noeud(jeu.getPlateau(), 0);
+                    Noeud racine = new Noeud(jeu.getPlateau(), 0, jeu.getPions());
                     Minmax minmax = new Minmax(racine);
                     String nextMove = minmax.findPositionChange(jeu, racine,PROFONDEUR,jeu.getMaCouleur());
                     System.out.println("Mon coup : " + nextMove);

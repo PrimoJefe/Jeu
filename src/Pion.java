@@ -29,6 +29,7 @@ public class Pion {
     }
 
     public void setPosition(int x, int y) {
+
         this.position.x = x;
         this.position.y = y;
     }
