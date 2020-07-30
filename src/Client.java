@@ -3,7 +3,7 @@ import java.net.*;
 
 
 class Client {
-    public static final int PROFONDEUR = 4;
+    public static final int PROFONDEUR = 2;
     public static void main(String[] args) {
 
         Socket MyClient;

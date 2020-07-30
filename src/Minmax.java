@@ -11,15 +11,19 @@ public class Minmax {
     }
     public Noeud minimax(Jeu jeu, Noeud noeud, int profondeur, int alpha, int beta, boolean joueur) {
 
-        HashMap<Point, Case> cases = new HashMap<Point, Case>(noeud.getCases());
+
         ArrayList<String> deplacements = new ArrayList<String>();
-        ArrayList<Pion> pionsIn = new ArrayList<Pion>(joueur ? noeud.getpionsRouges() : noeud.getpionsNoirs());
-        ArrayList<Pion> pionsOut = new ArrayList<Pion>(joueur ? noeud.getpionsNoirs() : noeud.getpionsRouges());
+        ArrayList<Pion> pionsIn = jeu.cloneListe(joueur ? noeud.getpionsRouges() : noeud.getpionsNoirs());
+        ArrayList<Pion> pionsOut = jeu.cloneListe(joueur ? noeud.getpionsNoirs() : noeud.getpionsRouges());
+        HashMap<Point, Case> cases = jeu.cloneMap(noeud.getCases(), pionsIn, pionsOut);
+        //ArrayList<Pion> pionsIn = new ArrayList<Pion>(joueur ? noeud.getpionsRouges() : noeud.getpionsNoirs());
+        //ArrayList<Pion> pionsOut = new ArrayList<Pion>(joueur ? noeud.getpionsNoirs() : noeud.getpionsRouges());
         int eval;
         int minEval;
         int maxEval;
         Noeud noeudEnfant = new Noeud(cases, noeud.getScore(), pionsIn, pionsOut);
         int i = 0;
+
         if (profondeur == 0) {
             /*i++;
             System.out.println("iii" + i);
@@ -35,28 +39,40 @@ public class Minmax {
             return noeud;
         }
 
+        for (Pion pion : pionsIn) {
+            Point position = pion.getPosition();
+            deplacements.addAll(jeu.generateurMouvement(cases, position, pion.getDirection(), joueur));
+        }
+
+            //System.out.println(jeu.checkCases(noeud.getCases()));
+
+
         if (joueur) {
             maxEval = -1000000000;
             Noeud temp = new Noeud(cases, noeud.getScore(), pionsIn, pionsOut);
 
-            for (Pion pion : pionsIn) {
-                Point position = pion.getPosition();
-                deplacements = jeu.generateurMouvement(cases, position, pion.getDirection(), joueur);
-                Pion pionQuiBouge = cases.get(position).getPion();
+            for (String deplacement : deplacements) {
+                Point positionDepart = new Point(Character.getNumericValue(deplacement.charAt(0)),
+                        Character.getNumericValue(deplacement.charAt(1)));
 
-                for (String deplacement : deplacements) {
+                Point nouvellePosition = new Point(Character.getNumericValue(deplacement.charAt(2)),
+                        Character.getNumericValue(deplacement.charAt(3)));
 
-                    Point nouvellePosition = new Point(Character.getNumericValue(deplacement.charAt(0)),
-                            Character.getNumericValue(deplacement.charAt(1)));
-                    if (cases.get(nouvellePosition).getPion().getCouleur() != null) {
-                        pionsOut.remove(cases.get(nouvellePosition).getPion());
-                    }
-                    pion.setPosition(nouvellePosition);
-                    cases.get(nouvellePosition).setPion(pion);
-                    cases.get(position).setPion(new Pion(null, position, 0));
-                    System.out.println(position + "-" + nouvellePosition);
+                ArrayList<Pion> pionsInEnfant = jeu.cloneListe(pionsIn);
+                ArrayList<Pion> pionsOutEnfant = jeu.cloneListe(pionsOut);
+                HashMap<Point, Case> casesEnfant = jeu.cloneMap(cases, pionsInEnfant, pionsOutEnfant);
+
+                Pion pion = casesEnfant.get(positionDepart).getPion();
+
+                if (casesEnfant.get(nouvellePosition).getPion() != null) {
+                    pionsOutEnfant.remove(casesEnfant.get(nouvellePosition).getPion());
                 }
-                noeudEnfant = new Noeud(cases, maxEval, pionsIn, pionsOut);
+                pion.setPosition(nouvellePosition);
+                casesEnfant.get(nouvellePosition).setPion(pion);
+                casesEnfant.get(positionDepart).setPion(null);
+                //System.out.println(positionDepart + "-" + nouvellePosition);
+
+                noeudEnfant = new Noeud(casesEnfant, maxEval, pionsInEnfant, pionsOutEnfant);
                 Noeud noeudMax = minimax(jeu, noeudEnfant, profondeur - 1, alpha, beta, false);
                 eval = noeudMax.getScore();
 
@@ -67,10 +83,9 @@ public class Minmax {
 
                 alpha = Math.max(alpha, noeudMax.getScore());
 
-                if (beta <= alpha) {
+                /*if (beta <= alpha) {
                     break;
-                }
-
+                }*/
             }
             return (new Noeud(temp.getCases(), maxEval, temp.getpionsRouges(), temp.getpionsNoirs()));
         }
@@ -79,24 +94,29 @@ public class Minmax {
 
             Noeud temp = new Noeud(cases, noeud.getScore(), pionsOut, pionsIn);
 
-            for(Pion pion : pionsIn){
-                Point position = pion.getPosition();
-                deplacements = jeu.generateurMouvement(cases, position, pion.getDirection(), joueur);
+            for(String deplacement : deplacements) {
 
+                Point positionDepart = new Point(Character.getNumericValue(deplacement.charAt(0)),
+                        Character.getNumericValue(deplacement.charAt(1)));
 
-                for(String deplacement : deplacements) {
+                Point nouvellePosition = new Point(Character.getNumericValue(deplacement.charAt(2)),
+                        Character.getNumericValue(deplacement.charAt(3)));
 
-                    Point nouvellePosition = new Point(Character.getNumericValue(deplacement.charAt(0)),
-                            Character.getNumericValue(deplacement.charAt(1)));
-                    if (cases.get(nouvellePosition).getPion().getCouleur() != null) {
-                        pionsOut.remove(cases.get(nouvellePosition).getPion());
-                    }
-                    pion.setPosition(nouvellePosition);
-                    cases.get(nouvellePosition).setPion(pion);
-                    cases.get(position).setPion(new Pion(null, position, 0));
-                    System.out.println(position + "-" + nouvellePosition);
+                ArrayList<Pion> pionsInEnfant = jeu.cloneListe(pionsIn);
+                ArrayList<Pion> pionsOutEnfant = jeu.cloneListe(pionsOut);
+                HashMap<Point, Case> casesEnfant = jeu.cloneMap(cases, pionsInEnfant, pionsOutEnfant);
+
+                Pion pion = casesEnfant.get(positionDepart).getPion();
+
+                if (casesEnfant.get(nouvellePosition).getPion() != null) {
+                    pionsOutEnfant.remove(casesEnfant.get(nouvellePosition).getPion());
                 }
-                noeudEnfant = new Noeud(cases, minEval, pionsOut, pionsIn);
+                pion.setPosition(nouvellePosition);
+                casesEnfant.get(nouvellePosition).setPion(pion);
+                casesEnfant.get(positionDepart).setPion(null);
+                //System.out.println(positionDepart + "-" + nouvellePosition);
+
+                noeudEnfant = new Noeud(casesEnfant, minEval, pionsOutEnfant, pionsInEnfant);
                 Noeud noeudMin = minimax(jeu, noeudEnfant, profondeur - 1, alpha, beta, true);
                 eval = noeudMin.getScore();
 
@@ -107,15 +127,16 @@ public class Minmax {
 
                 beta = Math.min(beta, noeudMin.getScore());
 
-                if (beta <= alpha) {
+                /*if (beta <= alpha) {
                     break;
-                }
-
+                }*/
             }
             return (new Noeud(temp.getCases(), minEval, temp.getpionsRouges(), temp.getpionsNoirs()));
         }
 
     }
+
+
 
 //    public Noeud minimax(Jeu jeu, Noeud noeud, int profondeur, int alpha, int beta, boolean joueurRouge) {
 //        ArrayList<Integer[][]> enfants = new ArrayList<Integer[][]>();
@@ -205,26 +226,42 @@ public class Minmax {
         String newPosition = "";
         int oldX=-1,oldY=-1, newX=-1, newY=-1;
 
+
         Noeud noeudNextMove = minimax(jeu, parentNode, depth, -1000000000, 1000000000, joueurMax);
 
         HashMap<Point, Case> currentMoveBoard = parentNode.getCases();
         HashMap<Point, Case> nextMoveBoard = noeudNextMove.getCases();
 
-        for(int i=0; i<currentMoveBoard.size(); i++){
-            for(int j=0; j<currentMoveBoard.size(); j++){
-                if(!currentMoveBoard.get(new Point(i, j)).equals(nextMoveBoard.get(new Point(i, j)))
-                        && nextMoveBoard.get(new Point(i, j)).getPion().getCouleur() != null
-                        && nextMoveBoard.get(new Point(i, j)).getPion().getCouleur() == false
-                        || !currentMoveBoard.get(new Point(i, j)).equals(nextMoveBoard.get(new Point(i, j)))
-                        && nextMoveBoard.get(new Point(i, j)).getPion().getCouleur() != null
-                        && nextMoveBoard.get(new Point(i, j)).getPion().getCouleur() == true){
-                    newX = i;
-                    newY = j;
-                }if(!currentMoveBoard.get(new Point(i, j)).equals(nextMoveBoard.get(new Point(i, j)))
-                        && nextMoveBoard.get(new Point(i, j)).getPion().getCouleur() == null){
-                    oldX = i;
-                    oldY = j;
+        boolean nouveau = false;
+        boolean ancien = false;
+
+        for(int i=0; i<8; i++){
+            for(int j=0; j<8; j++){
+                if(currentMoveBoard.get(new Point(i, j)).getPion() == null){
+                    if(nextMoveBoard.get(new Point(i, j)).getPion() != null){
+                        newX = i;
+                        newY = j;
+                        nouveau = true;
+                    }
                 }
+                else if(nextMoveBoard.get(new Point(i, j)).getPion() != null){
+                    if(currentMoveBoard.get(new Point(i, j)).getPion().getCouleur() !=
+                        nextMoveBoard.get(new Point(i, j)).getPion().getCouleur()){
+                        newX = i;
+                        newY = j;
+                        nouveau = true;
+                    }
+                }
+                if(nextMoveBoard.get(new Point(i, j)).getPion() == null) {
+                    if(currentMoveBoard.get(new Point(i, j)).getPion() != null){
+                        oldX = i;
+                        oldY = j;
+                        ancien = true;
+                    }
+                }
+            }
+            if(nouveau && ancien){
+                break;
             }
         }
         currentPosition += conversionChiffreEnLettre(oldY);

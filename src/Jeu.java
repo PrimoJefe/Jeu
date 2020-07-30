@@ -4,9 +4,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class Jeu {
+public class Jeu implements Cloneable{
 
     private HashMap<Point, Case> cases;
+    private HashMap<Point, Case> copie;
     //private Integer[][] plateau;
     private boolean maCouleur;
     private boolean couleurAdverse;
@@ -16,6 +17,7 @@ public class Jeu {
     public Jeu() {};
     public Jeu(Integer[][] plateau, boolean maCouleur) {
         this.cases = new HashMap<Point, Case>();
+        this.copie = new HashMap<Point, Case>();
 
         this.maCouleur = maCouleur;
         if(maCouleur) {
@@ -50,9 +52,10 @@ public class Jeu {
                     caseP = new Case(position, pion);
                 }
                 else {
-                    caseP = new Case(position, new Pion(null, position, 0));
+                    caseP = new Case(position, null);
                 }
                 this.cases.put(position, caseP);
+                this.copie.put(position, caseP);
             }
         }
     }
@@ -89,7 +92,7 @@ public class Jeu {
         int value = 0;
         for (int x= 0; x < 8; x++){
             for (int y = 0; y< 8; y++){
-                if (cases.get(new Point(x,y)).getPion().getCouleur() == null) continue;
+                if (cases.get(new Point(x,y)).getPion() == null) continue;
                 if (cases.get(new Point(x,y)).getPion().getCouleur()) // ROUGE MAX
                 {
                     piecesRouges++;
@@ -276,6 +279,52 @@ public class Jeu {
 //        return value;
 //    }
 
+    public ArrayList<Pion> cloneListe(ArrayList<Pion> pions){
+        ArrayList<Pion> clone = new ArrayList<Pion>();
+        for(Pion pion : pions) {
+            clone.add(new Pion(pion.getCouleur(), pion.getPosition(), pion.getDirection()));
+        }
+        return clone;
+    }
+
+    public HashMap<Point, Case> cloneMap(HashMap<Point, Case> cases, ArrayList<Pion> pionsIn, ArrayList<Pion> pionsOut){
+        HashMap<Point, Case> clone = new HashMap<Point, Case>();
+        boolean trouve = false;
+        for(Point point : cases.keySet()){
+            trouve = false;
+            for(Pion pionIn : pionsIn){
+                if(pionIn.getPosition().equals(point)){
+                    clone.put(new Point(point.x, point.y), new Case(new Point(point.x,point.y), pionIn));
+                    trouve = true;
+                    break;
+                }
+
+            }
+            for(Pion pionOut : pionsOut){
+                if(pionOut.getPosition().equals(point)){
+                    clone.put(new Point(point.x, point.y), new Case(new Point(point.x,point.y), pionOut));
+                    trouve = true;
+                    break;
+                }
+            }
+            if(!trouve){
+                clone.put(new Point(point.x, point.y), new Case(new Point(point.x,point.y), null));
+            }
+        }
+        /*for(Point point : cases.keySet()){
+            boolean couleur;
+            Pion pion;
+            if(cases.get(point).getPion() != null){
+                couleur = cases.get(point).getPion().getCouleur();
+                pion = new Pion(couleur, new Point(point.x, point.y), cases.get(point).getPion().getDirection());
+            }else {
+                pion = null;
+            }
+            clone.put(new Point(point.x,point.y), new Case(new Point(point.x,point.y), pion));
+        }*/
+        return clone;
+    }
+
     public ArrayList<String> generateurMouvement(HashMap<Point, Case> cases, Point position, int direction, boolean joueur) {
         Point depart = new Point(position.x, position.y);
         Point devant = new Point(position.x + direction, position.y);
@@ -286,17 +335,17 @@ public class Jeu {
 
         if(!(direction == -1 && position.x + direction == 0) && !(direction == 1 && position.x + direction == 7)) {
 
-            if (cases.get(devant).getPion().getCouleur() == null) {
-                mouvementsPossibles.add("" + devant.x + devant.y);
+            if (cases.get(devant).getPion() == null) {
+                mouvementsPossibles.add("" + depart.x + depart.y + devant.x + devant.y);
             }
-            if (depart.y != 0) {
-                if (cases.get(gauche).getPion().getCouleur() == null || cases.get(gauche).getPion().getCouleur() != joueur) {
-                    mouvementsPossibles.add("" + gauche.x + gauche.y);
+            if (depart.y > 0) {
+                if (cases.get(gauche).getPion() == null || cases.get(gauche).getPion().getCouleur() != joueur) {
+                    mouvementsPossibles.add("" + depart.x + depart.y + gauche.x + gauche.y);
                 }
             }
-            if (depart.y != 7) {
-                if (cases.get(droite).getPion().getCouleur() == null || cases.get(droite).getPion().getCouleur() != joueur) {
-                    mouvementsPossibles.add("" + droite.x + droite.y);
+            if (depart.y < 7) {
+                if (cases.get(droite).getPion() == null || cases.get(droite).getPion().getCouleur() != joueur) {
+                    mouvementsPossibles.add("" + depart.x + depart.y + droite.x + droite.y);
                 }
             }
         }
@@ -311,6 +360,38 @@ public class Jeu {
             }
         }
         return copie;
+    }
+
+    public boolean checkCases(Map<Point, Case> casesL){
+        boolean test = true;
+        for(int i = 0; i<8; i++){
+            for(int j =0; j<8; j++){
+                Boolean couleur1 = this.copie.get(new Point(i,j)).getPion().getCouleur();
+                Boolean couleur2 = casesL.get(new Point(i,j)).getPion().getCouleur();
+                int c = -1;
+                if(couleur1 ==null){
+                    c=0;
+                }else if(couleur1 == true){
+                    c=4;
+                }else{
+                    c=2;
+                }
+
+                int g = -1;
+                if(couleur2 ==null){
+                    g=0;
+                }else if(couleur2 == true){
+                    g=4;
+                }else{
+                    g=2;
+                }
+
+                if(c!=g){
+                    test = false;
+                }
+            }
+        }
+        return test;
     }
 
     public void modifierPlateau(String s, boolean joueur){
@@ -334,7 +415,7 @@ public class Jeu {
                     break;
                 }
             }
-            this.cases.get(new Point(ancienX, ancienY)).setPion(new Pion(null, new Point(ancienX, ancienY), 0));
+            this.cases.get(new Point(ancienX, ancienY)).setPion(null);
             this.cases.get(new Point(nouveauX, nouveauY)).setPion(pionRouge);
             pionRouge.setPosition(new Point(nouveauX, nouveauY));
             this.pionsNoirs.remove(pionNoir);
@@ -355,7 +436,7 @@ public class Jeu {
                     break;
                 }
             }
-            this.cases.get(new Point(ancienX, ancienY)).setPion(new Pion(null, new Point(ancienX, ancienY), 0));
+            this.cases.get(new Point(ancienX, ancienY)).setPion(null);
             this.cases.get(new Point(nouveauX, nouveauY)).setPion(pionNoir);
             pionNoir.setPosition(new Point(nouveauX, nouveauY));
             this.pionsRouges.remove(pionRouge);
