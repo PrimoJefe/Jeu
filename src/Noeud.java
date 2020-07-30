@@ -1,64 +1,30 @@
+import java.awt.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Noeud {
 
-    private Integer[][] board;
-    private int depth;
-    private String position;
-    private boolean estJoueurMax;
+    private HashMap<Point, Case> cases;
     private int score;
-    private List<Noeud> enfants;
+    private ArrayList<Pion> pionsIn;
+    private ArrayList<Pion> pionsOut;
 
-
-    public Noeud(Integer[][] board, int score) {
-        this.board = board;
+    public Noeud(HashMap<Point, Case> cases, int score) {
+        this.cases = cases;
         this.score = score;
-        enfants = new ArrayList<>();
     }
 
-    boolean estJoueurMax() {
-        return this.estJoueurMax;
-    }
-
-    public Integer[][] getBoard(){
-        return this.board;
+    public HashMap<Point, Case> getCases(){
+        return this.cases;
     }
 
     public int getScore(){
         return this.score;
     }
 
-    public boolean getJoueurMax(){
-        return this.estJoueurMax;
-    }
-
-    public List<Noeud> getEnfants(){
-        return enfants;
-    }
-
-    public String getPosition(){
-        return this.position;
-    }
-
-    public int getDepth(){
-        return this.depth;
-    }
-
-    public void ajouterEnfant(Noeud enfant){
-        this.enfants.add(enfant);
-    }
-
-    public void setScore(int score){
+    public void setScore(int score) {
         this.score = score;
     }
-
-    public void setDepth(int depth){
-        this.depth = depth;
-    }
-
-    public void setPosition(String position){
-        this.position = position;
-    }
-
 }

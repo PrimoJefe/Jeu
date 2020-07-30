@@ -1,10 +1,24 @@
+import java.awt.*;
+
 public class Case {
-    private String position;
+    private Point position;
     private Pion pion;
 
-    public Case(String position, Pion pion) {
+
+    public Case(Point position, Pion pion) {
         this.position = position;
         this.pion = pion;
     }
 
+    public Point getPosition() {
+        return this.position;
+    }
+
+    public Pion getPion() {
+        return pion;
+    }
+
+    public void setPion(Pion pion){
+        this.pion = pion;
+    }
 }

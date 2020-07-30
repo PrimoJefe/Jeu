@@ -6,8 +6,8 @@ public class Pion {
     //private static final int ROUGE = 4;
 
     private boolean couleur;
-    private Point position;
     private int direction;
+    private Point position;
 
     public Pion (){};
     public Pion (boolean couleur, Point position, int direction) {
@@ -28,9 +28,8 @@ public class Pion {
         return this.direction = direction;
     }
 
-    public void setPosition(int x, int y) {
-        this.position.x = x;
-        this.position.y = y;
+    public void setPosition(Point position) {
+        this.position = position;
     }
 
 }

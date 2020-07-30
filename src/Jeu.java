@@ -1,10 +1,13 @@
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class Jeu {
 
-    private Integer[][] plateau;
+    private HashMap<Point, Case> cases;
+    //private Integer[][] plateau;
     private boolean maCouleur;
     private boolean couleurAdverse;
     private ArrayList<Pion> pionsRouges;
@@ -12,12 +15,8 @@ public class Jeu {
 
     public Jeu() {};
     public Jeu(Integer[][] plateau, boolean maCouleur) {
-        /*for(int i = 0; i < 8; i++) {
-            for(int j = 0; j < 8; j++) {
-                this.plateau[j][i] = plateau[i][j];
-            }
-        }*/
-        this.plateau = plateau;
+        this.cases = new HashMap<Point, Case>();
+
         this.maCouleur = maCouleur;
         if(maCouleur) {
             this.couleurAdverse = false;
@@ -29,20 +28,12 @@ public class Jeu {
         this.pionsNoirs = new ArrayList<Pion>();
         this.pionsRouges = new ArrayList<Pion>();
 
-       /* if (Integer.parseInt(String.valueOf(configuration.charAt(0))) == 1) {
-            this.maCouleur = true;
-            this.couleurAdverse = false;
-        }
-        else {
-            this.maCouleur = false;
-            this.couleurAdverse = true;
-        }*/
-
-        int i = 1;
         int direction = 1;
-        for (int x = 0; x < this.plateau.length; x++) {
-            for (int y = 0; y < this.plateau.length; y++) {
+        Case caseP;
+        for (int x = 0; x < plateau.length; x++) {
+            for (int y = 0; y < plateau.length; y++) {
                 Point position = new Point(x,y);
+
                 int valeur = plateau[x][y];
                 if (x > (plateau.length-1)/2) {
                     direction = -1;
@@ -51,12 +42,17 @@ public class Jeu {
                 if (valeur == 4) {
                     Pion pion = new Pion(true, position, direction);
                     pionsRouges.add(pion);
+                    caseP = new Case(position, pion);
                 }
                 else if (valeur == 2) {
                     Pion pion = new Pion(false, position, direction);
                     pionsNoirs.add(pion);
+                    caseP = new Case(position, pion);
                 }
-                i++;
+                else {
+                    caseP = new Case(position, null);
+                }
+                this.cases.put(position, caseP);
             }
         }
     }
@@ -110,9 +106,9 @@ public class Jeu {
 //        }
 //    }
 
-    public Integer[][] getPlateau() {
-        return this.plateau;
-    }
+//    public Integer[][] getPlateau() {
+//        return this.plateau;
+//    }
     public boolean getMaCouleur() { return this.maCouleur; }
     public boolean getCouleurAdverse() { return this.couleurAdverse; }
 
@@ -124,9 +120,9 @@ public class Jeu {
         return pionsNoirs;
     }
 
-    public void setPlateau(Integer[][] nouvelEtat) {
-        this.plateau = nouvelEtat;
-    }
+//    public void setPlateau(Integer[][] nouvelEtat) {
+//        this.plateau = nouvelEtat;
+//    }
 
     public void afficherPlateau(Integer[][] plateau) {
         for(int i = 0; i < plateau.length; i++){
@@ -235,63 +231,30 @@ public class Jeu {
         return value;
     }
 
-    public ArrayList<Integer[][]> generateurMouvement(Integer[][] plateau, ArrayList<Pion> pions) {
-        Integer[][] plateauPossible = copierTableau(plateau);
-        ArrayList<Integer[][]> mouvementsPossibles = new ArrayList<Integer[][]>();
+    public ArrayList<String> generateurMouvement(HashMap<Point, Case> cases, Point position, int direction, boolean joueur) {
+        Point depart = new Point(position.x, position.y);
+        Point devant = new Point(position.x + direction, position.y);
+        Point gauche = new Point(position.x + direction, position.y - 1);
+        Point droite = new Point(position.x + direction, position.y + 1);
 
-        for (Pion pion : pions) {
-            int ligne = pion.getPosition().x;
-            int colonne = pion.getPosition().y;
-            int avancement = ligne + pion.getDirection();
-            int couleur;
+        ArrayList<String> mouvementsPossibles = new ArrayList<String>();
 
-            if (pion.getCouleur() == true) {
-                couleur = 4;
-            }
-            else {
-                couleur = 2;
-            }
+        if(!(direction == -1 && position.x + direction == 0) && !(direction == 1 && position.x + direction == 7)) {
 
-            if (plateau[avancement][colonne] == 0) {
-                plateauPossible[avancement][colonne] = plateau[ligne][colonne];
-                plateauPossible[ligne][colonne] = 0;
-                mouvementsPossibles.add(plateauPossible);
-                plateauPossible = copierTableau(plateau);
+            if (cases.get(devant).getPion() == null) {
+                mouvementsPossibles.add("" + devant.x + devant.y);
             }
-            if(colonne != 0) {
-                if(plateau[avancement][colonne - 1] == 0) {
-                    plateauPossible[avancement][colonne - 1] = plateau[ligne][colonne];
-                    plateauPossible[ligne][colonne] = 0;
-                    mouvementsPossibles.add(plateauPossible);
-                    plateauPossible = copierTableau(plateau);
-                }
-                else if (plateau[avancement][colonne - 1] != couleur) {
-                    plateauPossible[avancement][colonne - 1] = plateau[ligne][colonne];
-                    plateauPossible[ligne][colonne] = 0;
-                    mouvementsPossibles.add(plateauPossible);
-                    plateauPossible = copierTableau(plateau);
+            if (depart.y != 0) {
+                if (cases.get(gauche).getPion() == null || cases.get(gauche).getPion().getCouleur() != joueur) {
+                    mouvementsPossibles.add("" + gauche.x + gauche.y);
                 }
             }
-            if(colonne != plateau.length - 1) {
-                if(plateau[avancement][colonne + 1] == 0) {
-                    plateauPossible[avancement][colonne + 1] = plateau[ligne][colonne];
-                    plateauPossible[ligne][colonne] = 0;
-                    mouvementsPossibles.add(plateauPossible);
-                    plateauPossible = copierTableau(plateau);
-                }
-                else if (plateau[avancement][colonne + 1] != couleur) {
-                    plateauPossible[avancement][colonne + 1] = plateau[ligne][colonne];
-                    plateauPossible[ligne][colonne] = 0;
-                    mouvementsPossibles.add(plateauPossible);
-                    plateauPossible = copierTableau(plateau);
+            if (depart.y != 7) {
+                if (cases.get(droite).getPion() == null || cases.get(droite).getPion().getCouleur() != joueur) {
+                    mouvementsPossibles.add("" + droite.x + droite.y);
                 }
             }
         }
-        /*for(int i = 0; i < mouvementsPossibles.size(); i++){
-            afficherPlateau(mouvementsPossibles.get(i));
-            System.out.print(" ");
-
-        }*/
         return mouvementsPossibles;
     }
 
