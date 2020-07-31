@@ -98,7 +98,7 @@ public class Jeu implements Cloneable{
         }
     }
 
-    public int getValue(Integer[][] board){
+    public int getValue(Map<Point, Case> cases){
 
 
         boolean victoireNoir = false;
@@ -112,11 +112,11 @@ public class Jeu implements Cloneable{
 
         for (int ligne= 0; ligne < 8; ligne++){
             for (int colonne = 0; colonne< 8; colonne++){
-                if (board[ligne][colonne]==0) continue;
-                if (board[ligne][colonne] ==4) // ROUGE MAX
+                if (cases.get(new Point(ligne, colonne)).getPion() == null) continue;
+                if (cases.get(new Point(ligne, colonne)).getPion().getCouleur() == true) // ROUGE MAX
                 {
                     piecesRouges++;
-                    value += getPieceValue(board,ligne, colonne,4);
+                    value += getPieceValue(cases,ligne, colonne,true);
                     if(ligne == 0){victoireRouge = true;}
                     if(ligne == 7){
                         value += pieceMaison;
@@ -127,7 +127,9 @@ public class Jeu implements Cloneable{
                     for (int i= 0; i < 8; i++){
                         int nbPiontEnemiColonne = 0;
                         for (int j = 0; j< 8; j++){
-                            if (board[j][i]==2){nbPiontEnemiColonne++;}
+                            if(cases.get(new Point(i, j)).getPion() != null){
+                                if (cases.get(new Point(i, j)).getPion().getCouleur() == false){nbPiontEnemiColonne++;}
+                            }
                         }
                         if (nbPiontEnemiColonne == 0){nbColonneVide++;}
                     }
@@ -141,7 +143,7 @@ public class Jeu implements Cloneable{
                 } else{ // NOIR MIN
                     // comme rouge
                     piecesNoir++;
-                    value += getPieceValue(board,ligne, colonne,2);
+                    value += getPieceValue(cases,ligne, colonne,false);
                     if(ligne ==7){victoireNoir = true;}
                     if(ligne == 0){value -= pieceMaison;}
 //                    if(ligne == 6 || ligne == 5){value -= valeurDanger;}
@@ -150,7 +152,9 @@ public class Jeu implements Cloneable{
                     for (int i= 0; i < 8; i++){
                         int nbPiontEnemiColonne = 0;
                         for (int j = 0; j< 8; j++){
-                            if (board[j][i]==4){nbPiontEnemiColonne++;}
+                            if(cases.get(new Point(i, j)).getPion() != null){
+                                if (cases.get(new Point(i, j)).getPion().getCouleur() == true){nbPiontEnemiColonne++;}
+                            }
                         }
                         if (nbPiontEnemiColonne == 0){nbColonneVide++;}
                     }
@@ -261,55 +265,55 @@ public class Jeu implements Cloneable{
         }
 
         else { //rouge MAX
-            int adversaire = 2;
+            boolean adversaire = false;
 
 
             if (row ==0){gagnant = true;}
 
             if (column > 0 && cases.get(new Point(row, column - 1)).getPion() != null) {
-                if (board[row][column - 1] == team) {
+                if (cases.get(new Point(row, column - 1)).getPion().getCouleur() == team) {
                     connecterH = true;
                 }
             }
 
-            if (column < 7 && cases.get(new Point(row, column - 1)).getPion() != null) {
-                if (board[row][column + 1] == team) {
+            if (column < 7 && cases.get(new Point(row, column + 1)).getPion() != null) {
+                if (cases.get(new Point(row, column + 1)).getPion().getCouleur() == team) {
                     connecterH = true;
                 }
             }
 
-            if (row > 0 && cases.get(new Point(row, column - 1)).getPion() != null) {
-                if (board[row - 1][column] == team) {
+            if (row > 0 && cases.get(new Point(row - 1, column)).getPion() != null) {
+                if (cases.get(new Point(row - 1, column)).getPion().getCouleur() == team) {
                     connecterV = true;
                 }
             }
 
-            if (row < 7 && cases.get(new Point(row, column - 1)).getPion() != null) {
-                if (board[row + 1][column] == team) {
+            if (row < 7 && cases.get(new Point(row + 1, column)).getPion() != null) {
+                if (cases.get(new Point(row + 1, column)).getPion().getCouleur() == team) {
                     connecterV = true;
                 }
             }
 
             if (row < 7) {
-                if (column > 0 && cases.get(new Point(row, column - 1)).getPion() != null) {
-                    if (board[row + 1][column - 1] == team) {
+                if (column > 0 && cases.get(new Point(row + 1, column - 1)).getPion() != null) {
+                    if (cases.get(new Point(row + 1, column - 1)).getPion().getCouleur() == team) {
                         defendu = true;
                     }
                 }
-                if (column < 7 && cases.get(new Point(row, column - 1)).getPion() != null) {
-                    if (board[row + 1][column + 1] == team) {
+                if (column < 7 && cases.get(new Point(row + 1, column + 1)).getPion() != null) {
+                    if (cases.get(new Point(row + 1, column + 1)).getPion().getCouleur() == team) {
                         defendu = true;
                     }
                 }
             }
             if (row > 0) {
-                if (column > 0 && cases.get(new Point(row, column - 1)).getPion() != null) {
-                    if (board[row - 1][column - 1] == adversaire) {
+                if (column > 0 && cases.get(new Point(row - 1, column - 1)).getPion() != null) {
+                    if (cases.get(new Point(row - 1, column - 1)).getPion().getCouleur() == adversaire) {
                         vulnerable = true;
                     }
                 }
-                if (column < 7 && cases.get(new Point(row, column - 1)).getPion() != null) {
-                    if (board[row - 1][column + 1] == adversaire) {
+                if (column < 7 && cases.get(new Point(row - 1, column + 1)).getPion() != null) {
+                    if (cases.get(new Point(row - 1, column + 1)).getPion().getCouleur() == adversaire) {
                         vulnerable = true;
                     }
                 }
