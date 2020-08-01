@@ -445,7 +445,7 @@ public class Jeu implements Cloneable{
 
         if(joueur == 4) {
             Pion pionRouge = this.pionsRouges.get(depart);
-            Pion pionNoir = this.pionsNoirs.get(arrivee);
+            //Pion pionNoir = this.pionsNoirs.get(arrivee);
 
             this.plateau[depart.x][depart.y] = 0;
             this.plateau[arrivee.x][arrivee.y] = 4;
@@ -454,13 +454,13 @@ public class Jeu implements Cloneable{
             pionRouge.setPosition(arrivee);
             this.pionsRouges.put(arrivee, pionRouge);
 
-            if(this.pionsNoirs.get(arrivee) != null) {
-                this.pionsNoirs.remove(pionNoir);
-            }
+            //if(pionNoir != null) {
+                this.pionsNoirs.remove(arrivee);
+            //}
         }
         else {
             Pion pionNoir = this.pionsNoirs.get(depart);
-            Pion pionRouge = this.pionsRouges.get(arrivee);
+            //Pion pionRouge = this.pionsRouges.get(arrivee);
 
             this.plateau[depart.x][depart.y] = 0;
             this.plateau[arrivee.x][arrivee.y] = 2;
@@ -469,9 +469,9 @@ public class Jeu implements Cloneable{
             pionNoir.setPosition(arrivee);
             this.pionsNoirs.put(arrivee, pionNoir);
 
-            if(this.pionsRouges.get(arrivee) != null) {
-                this.pionsRouges.remove(pionRouge);
-            }
+            //if(pionRouge != null) {
+                this.pionsRouges.remove(arrivee);
+           // }
         }
     }
 
