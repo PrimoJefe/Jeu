@@ -21,75 +21,61 @@ public class Jeu implements Cloneable{
     private int directionNoir = 0;
 
 
-    private HashMap<Point, Case> cases;
-    private HashMap<Point, Case> copie;
-    //private Integer[][] plateau;
-    private boolean maCouleur;
-    private boolean couleurAdverse;
-    private ArrayList<Pion> pionsRouges;
-    private ArrayList<Pion> pionsNoirs;
+    //private HashMap<Point, Case> cases;
+    //private HashMap<Point, Case> copie;
+    private int [][] plateau;
+    private int maCouleur;
+    private int couleurAdverse;
+    private Map<Point, Pion> pionsRouges;
+    private Map<Point, Pion> pionsNoirs;
 
     public Jeu() {};
-    public Jeu(Integer[][] plateau, boolean maCouleur) {
-        this.cases = new HashMap<Point, Case>();
-        this.copie = new HashMap<Point, Case>();
+    public Jeu(int[][] plateau, boolean maCouleur) {
+        this.plateau = copierTableau(plateau);
 
-        this.maCouleur = maCouleur;
-        if(maCouleur) {
-            this.couleurAdverse = false;
-        }
-        else {
-            this.couleurAdverse = true;
-        }
+        if(maCouleur) { this.maCouleur = 4;
+                        this.couleurAdverse = 2;}
+        else {this.maCouleur = 2;
+                this.couleurAdverse = 4;}
 
-        this.pionsNoirs = new ArrayList<Pion>();
-        this.pionsRouges = new ArrayList<Pion>();
+        this.pionsRouges = new HashMap<Point, Pion>();
+        this.pionsNoirs = new HashMap<Point, Pion>();
 
         int direction = 1;
-        Case caseP;
+
         for (int x = 0; x < plateau.length; x++) {
             for (int y = 0; y < plateau.length; y++) {
                 Point position = new Point(x,y);
-
                 int valeur = plateau[x][y];
+
                 if (x > (plateau.length-1)/2) {
                     direction = -1;
                 }
 
                 if (valeur == 4) {
-                    Pion pion = new Pion(true, position, direction);
-                    pionsRouges.add(pion);
-                    caseP = new Case(position, pion);
+                    pionsRouges.put(position, new Pion(4, position, direction));
                 }
                 else if (valeur == 2) {
-                    Pion pion = new Pion(false, position, direction);
-                    pionsNoirs.add(pion);
-                    caseP = new Case(position, pion);
+                    pionsNoirs.put(position, new Pion(2, position, direction));
                 }
-                else {
-                    caseP = new Case(position, null);
-                }
-                this.cases.put(position, caseP);
-                this.copie.put(position, caseP);
             }
         }
     }
-    public boolean getMaCouleur() { return this.maCouleur; }
-    public boolean getCouleurAdverse() { return this.couleurAdverse; }
-
-    public HashMap<Point, Case> getCases() {
-        return cases;
+    public int[][] getPlateau() {
+        return this.plateau;
     }
+    public int getMaCouleur() { return this.maCouleur; }
+    public int getCouleurAdverse() { return this.couleurAdverse; }
 
-    public ArrayList<Pion> getPionsRouges() {
+    public Map<Point, Pion> getPionsRouges() {
         return pionsRouges;
     }
 
-    public ArrayList<Pion> getPionsNoirs() {
+    public Map<Point, Pion> getPionsNoirs() {
         return pionsNoirs;
     }
 
-    public void afficherPlateau(Integer[][] plateau) {
+    public void afficherPlateau(int[][] plateau) {
         for(int i = 0; i < plateau.length; i++){
             System.out.print("\n");
             for(int j = 0; j < plateau.length; j++) {
@@ -98,8 +84,7 @@ public class Jeu implements Cloneable{
         }
     }
 
-    public int getValue(Map<Point, Case> cases){
-
+    public int getValue(int[][] board){
 
         boolean victoireNoir = false;
         boolean victoireRouge = false;
@@ -112,11 +97,11 @@ public class Jeu implements Cloneable{
 
         for (int ligne= 0; ligne < 8; ligne++){
             for (int colonne = 0; colonne< 8; colonne++){
-                if (cases.get(new Point(ligne, colonne)).getPion() == null) continue;
-                if (cases.get(new Point(ligne, colonne)).getPion().getCouleur() == true) // ROUGE MAX
+                if (board[ligne][colonne] == 0) continue;
+                if (board[ligne][colonne] == 4) // ROUGE MAX
                 {
                     piecesRouges++;
-                    value += getPieceValue(cases,ligne, colonne,true);
+                    value += getPieceValue(board,ligne, colonne,4);
                     if(ligne == 0){victoireRouge = true;}
                     if(ligne == 7){
                         value += pieceMaison;
@@ -127,9 +112,7 @@ public class Jeu implements Cloneable{
                     for (int i= 0; i < 8; i++){
                         int nbPiontEnemiColonne = 0;
                         for (int j = 0; j< 8; j++){
-                            if(cases.get(new Point(i, j)).getPion() != null){
-                                if (cases.get(new Point(i, j)).getPion().getCouleur() == false){nbPiontEnemiColonne++;}
-                            }
+                            if (board[j][i]==2){nbPiontEnemiColonne++;}
                         }
                         if (nbPiontEnemiColonne == 0){nbColonneVide++;}
                     }
@@ -143,7 +126,7 @@ public class Jeu implements Cloneable{
                 } else{ // NOIR MIN
                     // comme rouge
                     piecesNoir++;
-                    value += getPieceValue(cases,ligne, colonne,false);
+                    value += getPieceValue(board,ligne, colonne,2);
                     if(ligne ==7){victoireNoir = true;}
                     if(ligne == 0){value -= pieceMaison;}
 //                    if(ligne == 6 || ligne == 5){value -= valeurDanger;}
@@ -152,9 +135,7 @@ public class Jeu implements Cloneable{
                     for (int i= 0; i < 8; i++){
                         int nbPiontEnemiColonne = 0;
                         for (int j = 0; j< 8; j++){
-                            if(cases.get(new Point(i, j)).getPion() != null){
-                                if (cases.get(new Point(i, j)).getPion().getCouleur() == true){nbPiontEnemiColonne++;}
-                            }
+                            if (board[j][i]==4){nbPiontEnemiColonne++;}
                         }
                         if (nbPiontEnemiColonne == 0){nbColonneVide++;}
                     }
@@ -173,7 +154,7 @@ public class Jeu implements Cloneable{
         return value;
     }
 
-    public int getPieceValue(Map<Point, Case> cases, int row, int column, boolean team) {
+    public int getPieceValue(int[][] board, int row, int column, int team) {
         int value = valeurPiece;
         int coupPossibles = 0;
         boolean vulnerable = false;
@@ -185,53 +166,53 @@ public class Jeu implements Cloneable{
 
         // add connections value//
 
-        if (!team){ //NOIR MIN
-            boolean adversaire = true;
+        if (team == 2){ //NOIR MIN
+            int adversaire = 4;
 
-            if (row == 7){gagnant = true;}
+            if (row ==7){gagnant = true;}
 
-            if (column > 0 && cases.get(new Point(row, column - 1)).getPion() != null) {
-                if (cases.get(new Point(row, column - 1)).getPion().getCouleur() == team) {
+            if (column > 0) {
+                if (board[row][column - 1] == team) {
                     connecterH = true;}
             }
 
-            if (column < 7 && cases.get(new Point(row, column + 1)).getPion() != null) {
-                if (cases.get(new Point(row, column + 1)).getPion().getCouleur() == team) {
+            if (column < 7) {
+                if (board[row][column + 1] == team) {
                     connecterH = true;}
             }
 
-            if (row > 0 && cases.get(new Point(row - 1, column)).getPion() != null) {
-                if (cases.get(new Point(row - 1, column)).getPion().getCouleur() == team) {
+            if (row > 0) {
+                if (board[row-1][column] == team) {
                     connecterV = true;}
             }
 
-            if (row < 7 && cases.get(new Point(row + 1, column)).getPion() != null) {
-                if (cases.get(new Point(row + 1, column)).getPion().getCouleur() == team) {
+            if (row < 7) {
+                if (board[row+1][column] == team) {
                     connecterV = true;}
             }
 
             if (row > 0){
-                if(column>0 && cases.get(new Point(row - 1, column - 1)).getPion() != null){
-                    if(cases.get(new Point(row - 1, column - 1)).getPion().getCouleur()==team){defendu = true;}
+                if(column>0){
+                    if(board[row-1][column-1]==team){defendu = true;}
                 }
-                if(column<7 && cases.get(new Point(row - 1, column + 1)).getPion() != null){
-                    if(cases.get(new Point(row - 1, column + 1)).getPion().getCouleur()==team){defendu = true;}
+                if(column<7){
+                    if(board[row-1][column+1]==team){defendu = true;}
                 }
             }
             if (row < 7){
-                if(column>0 && cases.get(new Point(row + 1, column - 1)).getPion() != null){
-                    if(cases.get(new Point(row + 1, column - 1)).getPion().getCouleur()==adversaire){vulnerable = true;}
+                if(column>0){
+                    if(board[row+1][column-1]==adversaire){vulnerable = true;}
                 }
-                if(column<7 && cases.get(new Point(row + 1, column + 1)).getPion() != null){
-                    if(cases.get(new Point(row + 1, column + 1)).getPion().getCouleur()==adversaire){vulnerable = true;}
+                if(column<7){
+                    if(board[row+1][column+1]==adversaire){vulnerable = true;}
                 }
             }
 
             // facteur mobile
             if (row > 0 && column > 0 && column < 7){
-                if(cases.get(new Point(row + 1, column - 1)).getPion() == null){coupPossibles=coupPossibles+1;}
-                if(cases.get(new Point(row + 1, column + 1)).getPion() == null){coupPossibles=coupPossibles+1;}
-                if(cases.get(new Point(row +1, column)).getPion() == null){coupPossibles=coupPossibles+1;}
+                if(board[row+1][column-1]==0){coupPossibles=coupPossibles+1;}
+                if(board[row+1][column+1]==0){coupPossibles=coupPossibles+1;}
+                if(board[row+1][column]==0){coupPossibles=coupPossibles+1;}
             }
 
 
@@ -265,64 +246,64 @@ public class Jeu implements Cloneable{
         }
 
         else { //rouge MAX
-            boolean adversaire = false;
+            int adversaire = 2;
 
 
             if (row ==0){gagnant = true;}
 
-            if (column > 0 && cases.get(new Point(row, column - 1)).getPion() != null) {
-                if (cases.get(new Point(row, column - 1)).getPion().getCouleur() == team) {
+            if (column > 0) {
+                if (board[row][column - 1] == team) {
                     connecterH = true;
                 }
             }
 
-            if (column < 7 && cases.get(new Point(row, column + 1)).getPion() != null) {
-                if (cases.get(new Point(row, column + 1)).getPion().getCouleur() == team) {
+            if (column < 7) {
+                if (board[row][column + 1] == team) {
                     connecterH = true;
                 }
             }
 
-            if (row > 0 && cases.get(new Point(row - 1, column)).getPion() != null) {
-                if (cases.get(new Point(row - 1, column)).getPion().getCouleur() == team) {
-                    connecterV = true;
-                }
-            }
-
-            if (row < 7 && cases.get(new Point(row + 1, column)).getPion() != null) {
-                if (cases.get(new Point(row + 1, column)).getPion().getCouleur() == team) {
+            if (row > 0) {
+                if (board[row - 1][column] == team) {
                     connecterV = true;
                 }
             }
 
             if (row < 7) {
-                if (column > 0 && cases.get(new Point(row + 1, column - 1)).getPion() != null) {
-                    if (cases.get(new Point(row + 1, column - 1)).getPion().getCouleur() == team) {
+                if (board[row + 1][column] == team) {
+                    connecterV = true;
+                }
+            }
+
+            if (row < 7) {
+                if (column > 0) {
+                    if (board[row + 1][column - 1] == team) {
                         defendu = true;
                     }
                 }
-                if (column < 7 && cases.get(new Point(row + 1, column + 1)).getPion() != null) {
-                    if (cases.get(new Point(row + 1, column + 1)).getPion().getCouleur() == team) {
+                if (column < 7) {
+                    if (board[row + 1][column + 1] == team) {
                         defendu = true;
                     }
                 }
             }
             if (row > 0) {
-                if (column > 0 && cases.get(new Point(row - 1, column - 1)).getPion() != null) {
-                    if (cases.get(new Point(row - 1, column - 1)).getPion().getCouleur() == adversaire) {
+                if (column > 0) {
+                    if (board[row - 1][column - 1] == adversaire) {
                         vulnerable = true;
                     }
                 }
-                if (column < 7 && cases.get(new Point(row - 1, column + 1)).getPion() != null) {
-                    if (cases.get(new Point(row - 1, column + 1)).getPion().getCouleur() == adversaire) {
+                if (column < 7) {
+                    if (board[row - 1][column + 1] == adversaire) {
                         vulnerable = true;
                     }
                 }
             }
             // facteur mobile
             if (row > 0 && column > 0 && column < 7){
-                if(cases.get(new Point(row - 1, column - 1)).getPion() == null){coupPossibles=coupPossibles+1;}
-                if(cases.get(new Point(row - 1, column + 1)).getPion() == null){coupPossibles=coupPossibles+1;}
-                if(cases.get(new Point(row - 1, column)).getPion() == null){coupPossibles=coupPossibles+1;}
+                if(board[row-1][column-1]==0){coupPossibles=coupPossibles+1;}
+                if(board[row-1][column+1]==0){coupPossibles=coupPossibles+1;}
+                if(board[row-1][column]==0){coupPossibles=coupPossibles+1;}
             }
             value += coupPossibles*2;
 
@@ -372,45 +353,19 @@ public class Jeu implements Cloneable{
         return clone;
     }
 
-    public HashMap<Point, Case> cloneMap(HashMap<Point, Case> cases, ArrayList<Pion> pionsIn, ArrayList<Pion> pionsOut){
-        HashMap<Point, Case> clone = new HashMap<Point, Case>();
+    public Map<Point, Pion> cloneMap(Map<Point, Pion> pions){
+        Map<Point, Pion> clone = new HashMap<>();
         boolean trouve = false;
-        for(Point point : cases.keySet()){
-            trouve = false;
-            for(Pion pionIn : pionsIn){
-                if(pionIn.getPosition().equals(point)){
-                    clone.put(new Point(point.x, point.y), new Case(new Point(point.x,point.y), pionIn));
-                    trouve = true;
-                    break;
-                }
 
-            }
-            for(Pion pionOut : pionsOut){
-                if(pionOut.getPosition().equals(point)){
-                    clone.put(new Point(point.x, point.y), new Case(new Point(point.x,point.y), pionOut));
-                    trouve = true;
-                    break;
-                }
-            }
-            if(!trouve){
-                clone.put(new Point(point.x, point.y), new Case(new Point(point.x,point.y), null));
-            }
+        for(Point point : pions.keySet()) {
+            Pion pion = pions.get(point);
+
+            clone.put(point, new Pion(pion.getCouleur(), point, pion.getDirection()));
         }
-        /*for(Point point : cases.keySet()){
-            boolean couleur;
-            Pion pion;
-            if(cases.get(point).getPion() != null){
-                couleur = cases.get(point).getPion().getCouleur();
-                pion = new Pion(couleur, new Point(point.x, point.y), cases.get(point).getPion().getDirection());
-            }else {
-                pion = null;
-            }
-            clone.put(new Point(point.x,point.y), new Case(new Point(point.x,point.y), pion));
-        }*/
         return clone;
     }
 
-    public ArrayList<String> generateurMouvement(HashMap<Point, Case> cases, Point position, int direction, boolean joueur) {
+    public ArrayList<String> generateurMouvement(int[][] plateau, Point position, int direction, int joueur) {
         Point depart = new Point(position.x, position.y);
         Point devant = new Point(position.x + direction, position.y);
         Point gauche = new Point(position.x + direction, position.y - 1);
@@ -420,34 +375,35 @@ public class Jeu implements Cloneable{
 
         if(!(direction == -1 && position.x + direction == 0) && !(direction == 1 && position.x + direction == 7)) {
 
-            if (cases.get(devant).getPion() == null) {
+            if (plateau[devant.x][devant.y] == 0) {
                 mouvementsPossibles.add("" + depart.x + depart.y + devant.x + devant.y);
             }
             if (depart.y > 0) {
-                if (cases.get(gauche).getPion() == null || cases.get(gauche).getPion().getCouleur() != joueur) {
+                if (plateau[gauche.x][gauche.y] != joueur) {
                     mouvementsPossibles.add("" + depart.x + depart.y + gauche.x + gauche.y);
                 }
             }
             if (depart.y < 7) {
-                if (cases.get(droite).getPion() == null || cases.get(droite).getPion().getCouleur() != joueur) {
+                if (plateau[droite.x][droite.y] != joueur) {
                     mouvementsPossibles.add("" + depart.x + depart.y + droite.x + droite.y);
                 }
             }
+
         }
         return mouvementsPossibles;
     }
 
-    public Integer[][] copierTableau(Integer[][] plateau) {
-        Integer[][] copie = new Integer[plateau.length][plateau.length];
+    public int[][] copierTableau(int[][] plateau) {
+        int[][] clone = new int[plateau.length][plateau.length];
         for (int i = 0; i < plateau.length; i++) {
             for(int j = 0; j < plateau.length; j++) {
-                copie[i][j] = plateau[i][j];
+                clone[i][j] = plateau[i][j];
             }
         }
-        return copie;
+        return clone;
     }
 
-    public boolean checkCases(Map<Point, Case> casesL){
+    /*public boolean checkCases(Map<Point, Case> casesL){
         boolean test = true;
         for(int i = 0; i<8; i++){
             for(int j =0; j<8; j++){
@@ -477,58 +433,46 @@ public class Jeu implements Cloneable{
             }
         }
         return test;
-    }
+    }*/
 
-    public void modifierPlateau(String s, boolean joueur){
-        int ancienY = conversionLettreEnChiffre(s.charAt(0));
-        int ancienX = conversionChiffreEnChiffre(Integer.parseInt(String.valueOf(s.charAt(1))));
-        int nouveauY = conversionLettreEnChiffre(s.charAt(5));
-        int nouveauX = conversionChiffreEnChiffre(Integer.parseInt(String.valueOf(s.charAt(6))));
+    public void modifierPlateau(String s, int joueur){
+        Point depart = new Point(conversionChiffreEnChiffre(Integer.parseInt(String.valueOf(s.charAt(1)))),
+            conversionLettreEnChiffre(s.charAt(0)));
 
-        if(joueur) {
-            Pion pionRouge = new Pion();
-            for(Pion pion : pionsRouges){
-                if(pion.getPosition().x == ancienX && pion.getPosition().y == ancienY) {
-                    pionRouge = pion;
-                    break;
-                }
+        Point arrivee = new Point(conversionChiffreEnChiffre(Integer.parseInt(String.valueOf(s.charAt(6)))),
+                conversionLettreEnChiffre(s.charAt(5)));
+
+
+        if(joueur == 4) {
+            Pion pionRouge = this.pionsRouges.get(depart);
+            Pion pionNoir = this.pionsNoirs.get(arrivee);
+
+            this.plateau[depart.x][depart.y] = 0;
+            this.plateau[arrivee.x][arrivee.y] = 4;
+
+            this.pionsRouges.remove(depart);
+            pionRouge.setPosition(arrivee);
+            this.pionsRouges.put(arrivee, pionRouge);
+
+            if(this.pionsNoirs.get(arrivee) != null) {
+                this.pionsNoirs.remove(pionNoir);
             }
-            Pion pionNoir = new Pion();
-            for(Pion pion : pionsNoirs) {
-                if(pion.getPosition().x == nouveauX && pion.getPosition().y == nouveauY) {
-                    pionNoir = pion;
-                    break;
-                }
-            }
-            this.cases.get(new Point(ancienX, ancienY)).setPion(null);
-            this.cases.get(new Point(nouveauX, nouveauY)).setPion(pionRouge);
-            pionRouge.setPosition(new Point(nouveauX, nouveauY));
-            this.pionsNoirs.remove(pionNoir);
-
         }
         else {
-            Pion pionNoir = new Pion();
-            for(Pion pion : pionsNoirs){
-                if(pion.getPosition().x == ancienX && pion.getPosition().y == ancienY) {
-                    pionNoir = pion;
-                    break;
-                }
-            }
-            Pion pionRouge = new Pion();
-            for(Pion pion : pionsRouges) {
-                if(pion.getPosition().x == nouveauX && pion.getPosition().y == nouveauY) {
-                    pionRouge = pion;
-                    break;
-                }
-            }
-            this.cases.get(new Point(ancienX, ancienY)).setPion(null);
-            this.cases.get(new Point(nouveauX, nouveauY)).setPion(pionNoir);
-            pionNoir.setPosition(new Point(nouveauX, nouveauY));
-            this.pionsRouges.remove(pionRouge);
-//            afficherPlateau(this.plateau);
-//            System.out.println("\n");
-        }
+            Pion pionNoir = this.pionsNoirs.get(depart);
+            Pion pionRouge = this.pionsRouges.get(arrivee);
 
+            this.plateau[depart.x][depart.y] = 0;
+            this.plateau[arrivee.x][arrivee.y] = 2;
+
+            this.pionsNoirs.remove(depart);
+            pionNoir.setPosition(arrivee);
+            this.pionsNoirs.put(arrivee, pionNoir);
+
+            if(this.pionsRouges.get(arrivee) != null) {
+                this.pionsRouges.remove(pionRouge);
+            }
+        }
     }
 
     public int conversionLettreEnChiffre(char lettre) {

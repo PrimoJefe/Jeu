@@ -3,13 +3,13 @@ import java.net.*;
 
 
 class Client {
-    public static final int PROFONDEUR = 5;
+    public static final int PROFONDEUR = 2;
     public static void main(String[] args) {
 
         Socket MyClient;
         BufferedInputStream input;
         BufferedOutputStream output;
-        Integer[][] board = new Integer[8][8];
+        int[][] board = new int[8][8];
 
         Jeu jeu = new Jeu();
 
@@ -48,7 +48,7 @@ class Client {
                     jeu = new Jeu(board, true);
 
                     System.out.println("Nouvelle partie! Vous jouer blanc, entrez votre premier coup : ");
-                    Noeud racine = new Noeud(jeu.getCases(), 0, jeu.getPionsRouges(), jeu.getPionsNoirs());
+                    Noeud racine = new Noeud(jeu.getPlateau(), 0, jeu.getPionsRouges(), jeu.getPionsNoirs());
                     Minmax minmax = new Minmax(racine);
                     String nextMove = minmax.findPositionChange(jeu, racine, PROFONDEUR, jeu.getMaCouleur());
                     System.out.println("Mon coup : " + nextMove);
@@ -98,7 +98,7 @@ class Client {
                     System.out.println("Entrez votre coup : ");
 
 
-                    Noeud racine = new Noeud(jeu.getCases(), 0, jeu.getPionsRouges(), jeu.getPionsNoirs());
+                    Noeud racine = new Noeud(jeu.getPlateau(), 0, jeu.getPionsRouges(), jeu.getPionsNoirs());
                     Minmax minmax = new Minmax(racine);
                     String nextMove = minmax.findPositionChange(jeu, racine,PROFONDEUR,jeu.getMaCouleur());
                     System.out.println("Mon coup : " + nextMove);
@@ -111,7 +111,7 @@ class Client {
                 // Le dernier coup est invalide
                 if(cmd == '4'){
                     System.out.println("Coup invalide, entrez un nouveau coup : ");
-                    Noeud racine = new Noeud(jeu.getCases(), 0, jeu.getPionsRouges(), jeu.getPionsNoirs());
+                    Noeud racine = new Noeud(jeu.getPlateau(), 0, jeu.getPionsRouges(), jeu.getPionsNoirs());
                     Minmax minmax = new Minmax(racine);
                     String nextMove = minmax.findPositionChange(jeu, racine,PROFONDEUR,jeu.getMaCouleur());
                     System.out.println("Mon coup : " + nextMove);

@@ -6,20 +6,20 @@ import java.util.Map;
 
 public class Noeud {
 
-    private HashMap<Point, Case> cases;
+    private int[][] plateau;
     private int score;
-    private ArrayList<Pion> pionsRouges;
-    private ArrayList<Pion> pionsNoirs;
+    private Map<Point, Pion> pionsRouges;
+    private Map<Point, Pion> pionsNoirs;
 
-    public Noeud(HashMap<Point, Case> cases, int score, ArrayList<Pion> pionsRouges, ArrayList<Pion> pionsNoirs) {
-        this.cases = cases;
+    public Noeud(int[][] plateau, int score, Map<Point, Pion> pionsRouges, Map<Point, Pion> pionsNoirs) {
+        this.plateau = plateau;
         this.score = score;
-        this.pionsRouges = new ArrayList<Pion>(pionsRouges);
-        this.pionsNoirs = new ArrayList<Pion>(pionsNoirs);
+        this.pionsRouges = new HashMap<>(pionsRouges);
+        this.pionsNoirs = new HashMap<>(pionsNoirs);
     }
 
-    public HashMap<Point, Case> getCases(){
-        return this.cases;
+    public int[][] getPlateau(){
+        return this.plateau;
     }
 
     public int getScore(){
@@ -30,11 +30,11 @@ public class Noeud {
         this.score = score;
     }
 
-    public ArrayList<Pion> getpionsRouges() {
+    public Map<Point, Pion> getPionsRouges() {
         return pionsRouges;
     }
 
-    public ArrayList<Pion> getpionsNoirs() {
+    public Map<Point, Pion> getPionsNoirs() {
         return pionsNoirs;
     }
 }
