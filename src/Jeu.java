@@ -209,7 +209,7 @@ public class Jeu implements Cloneable{
             }
 
             // facteur mobile
-            if (row > 0 && column > 0 && column < 7){
+            if (row < 7 && column > 0 && column < 7){
                 if(board[row+1][column-1]==0){coupPossibles=coupPossibles+1;}
                 if(board[row+1][column+1]==0){coupPossibles=coupPossibles+1;}
                 if(board[row+1][column]==0){coupPossibles=coupPossibles+1;}
@@ -373,7 +373,7 @@ public class Jeu implements Cloneable{
 
         ArrayList<String> mouvementsPossibles = new ArrayList<String>();
 
-        if(!(direction == -1 && position.x + direction == 0) && !(direction == 1 && position.x + direction == 7)) {
+        if(!(direction == -1 && position.x == 0) && !(direction == 1 && position.x == 7)) {
 
             if (plateau[devant.x][devant.y] == 0) {
                 mouvementsPossibles.add("" + depart.x + depart.y + devant.x + devant.y);
@@ -402,38 +402,6 @@ public class Jeu implements Cloneable{
         }
         return clone;
     }
-
-    /*public boolean checkCases(Map<Point, Case> casesL){
-        boolean test = true;
-        for(int i = 0; i<8; i++){
-            for(int j =0; j<8; j++){
-                Boolean couleur1 = this.copie.get(new Point(i,j)).getPion().getCouleur();
-                Boolean couleur2 = casesL.get(new Point(i,j)).getPion().getCouleur();
-                int c = -1;
-                if(couleur1 ==null){
-                    c=0;
-                }else if(couleur1 == true){
-                    c=4;
-                }else{
-                    c=2;
-                }
-
-                int g = -1;
-                if(couleur2 ==null){
-                    g=0;
-                }else if(couleur2 == true){
-                    g=4;
-                }else{
-                    g=2;
-                }
-
-                if(c!=g){
-                    test = false;
-                }
-            }
-        }
-        return test;
-    }*/
 
     public void modifierPlateau(String s, int joueur){
         Point depart = new Point(conversionChiffreEnChiffre(Integer.parseInt(String.valueOf(s.charAt(1)))),
