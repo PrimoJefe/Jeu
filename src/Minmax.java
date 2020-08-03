@@ -158,15 +158,17 @@ public class Minmax {
                 if(nouveau && ancien){
                     break;
                 }
-                if(currentMoveBoard[i][j] != nextMoveBoard[i][j] && nextMoveBoard[i][j] != 0) {
-                    newX = i;
-                    newY = j;
-                    nouveau = true;
-                }
-                if(currentMoveBoard[i][j] != nextMoveBoard[i][j] && nextMoveBoard[i][j] == 0) {
-                    oldX = i;
-                    oldY = j;
-                    ancien = true;
+                if(currentMoveBoard[i][j] != nextMoveBoard[i][j]) {
+                    if(nextMoveBoard[i][j] != 0) {
+                        newX = i;
+                        newY = j;
+                        nouveau = true;
+                    }
+                    else if(nextMoveBoard[i][j] == 0) {
+                        oldX = i;
+                        oldY = j;
+                        ancien = true;
+                    }
                 }
             }
         }
@@ -246,5 +248,4 @@ public class Minmax {
         }
         return str;
     }
-
 }
