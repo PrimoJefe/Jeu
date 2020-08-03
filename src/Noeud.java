@@ -8,14 +8,14 @@ public class Noeud {
 
     private int[][] plateau;
     private int score;
-    private Map<Point, Pion> pionsRouges;
-    private Map<Point, Pion> pionsNoirs;
+    private ArrayList<Pion> pionsRouges;
+    private ArrayList<Pion> pionsNoirs;
 
-    public Noeud(int[][] plateau, int score, Map<Point, Pion> pionsRouges, Map<Point, Pion> pionsNoirs) {
+    public Noeud(int[][] plateau, int score, ArrayList<Pion> pionsRouges, ArrayList<Pion> pionsNoirs) {
         this.plateau = plateau;
         this.score = score;
-        this.pionsRouges = new HashMap<>(pionsRouges);
-        this.pionsNoirs = new HashMap<>(pionsNoirs);
+        this.pionsRouges = new ArrayList<Pion>(pionsRouges);
+        this.pionsNoirs = new ArrayList<Pion>(pionsNoirs);
     }
 
     public int[][] getPlateau(){
@@ -30,11 +30,11 @@ public class Noeud {
         this.score = score;
     }
 
-    public Map<Point, Pion> getPionsRouges() {
+    public ArrayList<Pion> getPionsRouges() {
         return pionsRouges;
     }
 
-    public Map<Point, Pion> getPionsNoirs() {
+    public ArrayList<Pion> getPionsNoirs() {
         return pionsNoirs;
     }
 }

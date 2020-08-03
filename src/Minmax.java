@@ -12,8 +12,8 @@ public class Minmax {
     public Noeud minimax(Jeu jeu, Noeud noeud, int profondeur, int alpha, int beta, int joueur) {
 
         int[][] plateau = jeu.copierTableau(noeud.getPlateau());
-        Map<Point, Pion> pionsIn = jeu.cloneMap(joueur == 4 ? noeud.getPionsRouges() : noeud.getPionsNoirs());
-        Map<Point, Pion> pionsOut = jeu.cloneMap(joueur == 4 ? noeud.getPionsNoirs() : noeud.getPionsRouges());
+        ArrayList<Pion> pionsIn = jeu.cloneMap(joueur == 4 ? noeud.getPionsRouges() : noeud.getPionsNoirs());
+        ArrayList<Pion> pionsOut = jeu.cloneMap(joueur == 4 ? noeud.getPionsNoirs() : noeud.getPionsRouges());
 
         ArrayList<String> deplacements = new ArrayList<String>();
 
@@ -35,7 +35,7 @@ public class Minmax {
             return noeud;
         }
 
-        for (Pion pion : pionsIn.values()) {
+        for (Pion pion : pionsIn) {
             Point position = pion.getPosition();
             deplacements.addAll(jeu.generateurMouvement(plateau, position, pion.getDirection(), joueur));
         }
@@ -55,17 +55,24 @@ public class Minmax {
                         Character.getNumericValue(deplacement.charAt(3)));
 
                 int[][] plateauEnfant = jeu.copierTableau(plateau);
-                Map<Point, Pion> pionsInEnfant = jeu.cloneMap(pionsIn);
-                Map<Point, Pion> pionsOutEnfant = jeu.cloneMap(pionsOut);
+                ArrayList<Pion> pionsInEnfant = jeu.cloneMap(pionsIn);
+                ArrayList<Pion> pionsOutEnfant = jeu.cloneMap(pionsOut);
 
-                Pion pion = pionsInEnfant.get(positionDepart);
-                pion.setPosition(nouvellePosition);
+                for(Pion pion : pionsInEnfant) {
+                    if(pion.getPosition().equals(positionDepart)) {
+                        pion.setPosition(nouvellePosition);
+                        break;
+                    }
+                }
 
                 if (plateauEnfant[nouvellePosition.x][nouvellePosition.y] != 0) {
-                    pionsOutEnfant.remove(nouvellePosition);
+                    for(Pion pion : pionsOutEnfant) {
+                        if(pion.getPosition().equals(nouvellePosition)) {
+                            pionsOutEnfant.remove(pion);
+                            break;
+                        }
+                    }
                 }
-                pionsInEnfant.remove(positionDepart);
-                pionsInEnfant.put(nouvellePosition, pion);
                 plateauEnfant[nouvellePosition.x][nouvellePosition.y] = joueur;
                 plateauEnfant[positionDepart.x][positionDepart.y] = 0;
                 //System.out.println(positionDepart + "-" + nouvellePosition);
@@ -101,17 +108,24 @@ public class Minmax {
                         Character.getNumericValue(deplacement.charAt(3)));
 
                 int[][] plateauEnfant = jeu.copierTableau(plateau);
-                Map<Point, Pion> pionsInEnfant = jeu.cloneMap(pionsIn);
-                Map<Point, Pion> pionsOutEnfant = jeu.cloneMap(pionsOut);
+                ArrayList<Pion> pionsInEnfant = jeu.cloneMap(pionsIn);
+                ArrayList<Pion> pionsOutEnfant = jeu.cloneMap(pionsOut);
 
-                Pion pion = pionsInEnfant.get(positionDepart);
-                pion.setPosition(nouvellePosition);
+                for(Pion pion : pionsInEnfant) {
+                    if(pion.getPosition().equals(positionDepart)) {
+                        pion.setPosition(nouvellePosition);
+                        break;
+                    }
+                }
 
                 if (plateauEnfant[nouvellePosition.x][nouvellePosition.y] != 0) {
-                    pionsOutEnfant.remove(nouvellePosition);
+                    for(Pion pion : pionsOutEnfant) {
+                        if(pion.getPosition().equals(nouvellePosition)) {
+                            pionsOutEnfant.remove(pion);
+                            break;
+                        }
+                    }
                 }
-                pionsInEnfant.remove(positionDepart);
-                pionsInEnfant.put(nouvellePosition, pion);
                 plateauEnfant[nouvellePosition.x][nouvellePosition.y] = joueur;
                 plateauEnfant[positionDepart.x][positionDepart.y] = 0;
                 //System.out.println(positionDepart + "-" + nouvellePosition);
@@ -177,6 +191,10 @@ public class Minmax {
 
         newPosition += conversionChiffreEnLettre(newY);
         newPosition += conversionChiffreEnChiffre(newX);
+
+        jeu.setPlateau(noeudNextMove.getPlateau());
+        jeu.setPionsRouges(noeudNextMove.getPionsRouges());
+        jeu.setPionsNoirs(noeudNextMove.getPionsNoirs());
 
         return currentPosition + " - " + newPosition;
     }

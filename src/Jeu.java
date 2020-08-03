@@ -26,8 +26,8 @@ public class Jeu implements Cloneable{
     private int [][] plateau;
     private int maCouleur;
     private int couleurAdverse;
-    private Map<Point, Pion> pionsRouges;
-    private Map<Point, Pion> pionsNoirs;
+    private ArrayList<Pion> pionsRouges;
+    private ArrayList<Pion> pionsNoirs;
 
     public Jeu() {};
     public Jeu(int[][] plateau, boolean maCouleur) {
@@ -38,8 +38,8 @@ public class Jeu implements Cloneable{
         else {this.maCouleur = 2;
                 this.couleurAdverse = 4;}
 
-        this.pionsRouges = new HashMap<Point, Pion>();
-        this.pionsNoirs = new HashMap<Point, Pion>();
+        this.pionsRouges = new ArrayList<>();
+        this.pionsNoirs = new ArrayList<>();
 
         int direction = 1;
 
@@ -53,10 +53,10 @@ public class Jeu implements Cloneable{
                 }
 
                 if (valeur == 4) {
-                    pionsRouges.put(position, new Pion(4, position, direction));
+                    pionsRouges.add(new Pion(4, position, direction));
                 }
                 else if (valeur == 2) {
-                    pionsNoirs.put(position, new Pion(2, position, direction));
+                    pionsNoirs.add(new Pion(2, position, direction));
                 }
             }
         }
@@ -67,12 +67,23 @@ public class Jeu implements Cloneable{
     public int getMaCouleur() { return this.maCouleur; }
     public int getCouleurAdverse() { return this.couleurAdverse; }
 
-    public Map<Point, Pion> getPionsRouges() {
+    public ArrayList<Pion> getPionsRouges() {
         return pionsRouges;
     }
 
-    public Map<Point, Pion> getPionsNoirs() {
+    public ArrayList<Pion> getPionsNoirs() {
         return pionsNoirs;
+    }
+
+    public void setPlateau(int[][] plateau) {
+        this.plateau = plateau;
+    }
+
+    public void setPionsRouges(ArrayList<Pion> pionsRouges) {
+        this.pionsRouges = pionsRouges;
+    }
+    public void setPionsNoirs(ArrayList<Pion> pionsNoirs) {
+        this.pionsNoirs = pionsNoirs;
     }
 
     public void afficherPlateau(int[][] plateau) {
@@ -353,14 +364,12 @@ public class Jeu implements Cloneable{
         return clone;
     }
 
-    public Map<Point, Pion> cloneMap(Map<Point, Pion> pions){
-        Map<Point, Pion> clone = new HashMap<>();
+    public ArrayList<Pion> cloneMap(ArrayList<Pion> pions){
+        ArrayList<Pion> clone = new ArrayList<>();
         boolean trouve = false;
 
-        for(Point point : pions.keySet()) {
-            Pion pion = pions.get(point);
-
-            clone.put(point, new Pion(pion.getCouleur(), point, pion.getDirection()));
+        for(Pion pion : pions) {
+            clone.add(new Pion(pion.getCouleur(), new Point(pion.getPosition().x, pion.getPosition().y), pion.getDirection()));
         }
         return clone;
     }
@@ -412,34 +421,52 @@ public class Jeu implements Cloneable{
 
 
         if(joueur == 4) {
-            Pion pionRouge = this.pionsRouges.get(depart);
-            //Pion pionNoir = this.pionsNoirs.get(arrivee);
+            Pion pionRouge = null;
+            for(Pion pion : this.pionsRouges) {
+                if(pion.getPosition().equals(depart)) {
+                    pionRouge = pion;
+                    break;
+                }
+            }
+            if(this.plateau[arrivee.x][arrivee.y] == 4){
+                Pion pionNoir = null;
+                for(Pion pion : this.pionsNoirs) {
+                    if(pion.getPosition().equals(arrivee)) {
+                        pionNoir = pion;
+                        break;
+                    }
+                }
+                this.pionsNoirs.remove(pionNoir);
+            }
 
             this.plateau[depart.x][depart.y] = 0;
             this.plateau[arrivee.x][arrivee.y] = 4;
 
-            this.pionsRouges.remove(depart);
             pionRouge.setPosition(arrivee);
-            this.pionsRouges.put(arrivee, pionRouge);
-
-            //if(pionNoir != null) {
-                this.pionsNoirs.remove(arrivee);
-            //}
         }
         else {
-            Pion pionNoir = this.pionsNoirs.get(depart);
-            //Pion pionRouge = this.pionsRouges.get(arrivee);
+            Pion pionNoir = null;
+            for(Pion pion : this.pionsNoirs) {
+                if(pion.getPosition().equals(depart)) {
+                    pionNoir = pion;
+                    break;
+                }
+            }
+            if(this.plateau[arrivee.x][arrivee.y] == 4){
+                Pion pionRouge = null;
+                for(Pion pion : this.pionsRouges) {
+                    if(pion.getPosition().equals(arrivee)) {
+                        pionRouge = pion;
+                        break;
+                    }
+                }
+                this.pionsRouges.remove(pionRouge);
+            }
 
             this.plateau[depart.x][depart.y] = 0;
             this.plateau[arrivee.x][arrivee.y] = 2;
 
-            this.pionsNoirs.remove(depart);
             pionNoir.setPosition(arrivee);
-            this.pionsNoirs.put(arrivee, pionNoir);
-
-            //if(pionRouge != null) {
-                this.pionsRouges.remove(arrivee);
-           // }
         }
     }
 

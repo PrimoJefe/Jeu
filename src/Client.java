@@ -3,7 +3,7 @@ import java.net.*;
 
 
 class Client {
-    public static final int PROFONDEUR = 5;
+    public static final int PROFONDEUR = 4;
     public static void main(String[] args) {
 
         Socket MyClient;
@@ -55,7 +55,7 @@ class Client {
 
                     output.write(nextMove.getBytes(),0,nextMove.length());
                     output.flush();
-                    jeu.modifierPlateau(nextMove, jeu.getMaCouleur());
+                    //jeu.modifierPlateau(nextMove, jeu.getMaCouleur());
                 }
                 // Debut de la partie en joueur Noir
                 if(cmd == '2'){
@@ -105,7 +105,7 @@ class Client {
 
                     output.write(nextMove.getBytes(),0,nextMove.length());
                     output.flush();
-                    jeu.modifierPlateau(nextMove, jeu.getMaCouleur());
+                    //jeu.modifierPlateau(nextMove, jeu.getMaCouleur());
 
                 }
                 // Le dernier coup est invalide
