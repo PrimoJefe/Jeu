@@ -1,34 +1,36 @@
 import java.util.ArrayList;
-import java.util.List;
 
 public class Noeud {
 
-    private Integer[][] board;
-    private boolean estJoueurMax;
+    private int[][] plateau;
     private int score;
-    private List<Noeud> enfants;
+    private ArrayList<Pion> pionsRouges;
+    private ArrayList<Pion> pionsNoirs;
 
-
-    public Noeud(Integer[][] position, boolean estJoueurMax){
-        this.board = position;
-        this.estJoueurMax = estJoueurMax;
-        enfants = new ArrayList<>();
+    public Noeud(int[][] plateau, int score, ArrayList<Pion> pionsRouges, ArrayList<Pion> pionsNoirs) {
+        this.plateau = plateau;
+        this.score = score;
+        this.pionsRouges = new ArrayList<Pion>(pionsRouges);
+        this.pionsNoirs = new ArrayList<Pion>(pionsNoirs);
     }
 
-    public Integer[][] getBoard(){
-        return this.board;
+    public int[][] getPlateau(){
+        return this.plateau;
     }
 
-    public boolean getJoeurMax(){
-        return this.estJoueurMax;
+    public int getScore(){
+        return this.score;
     }
 
-    public List<Noeud> getEnfants(){
-        return enfants;
+    public void setScore(int score) {
+        this.score = score;
     }
 
-    public void ajouterEnfant(Noeud enfant){
-        this.enfants.add(enfant);
+    public ArrayList<Pion> getPionsRouges() {
+        return pionsRouges;
     }
 
+    public ArrayList<Pion> getPionsNoirs() {
+        return pionsNoirs;
+    }
 }

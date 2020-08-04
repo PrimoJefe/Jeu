@@ -1,14 +1,16 @@
 import java.io.*;
 import java.net.*;
 
-
 class Client {
+    public static final int PROFONDEUR = 6;
     public static void main(String[] args) {
 
         Socket MyClient;
         BufferedInputStream input;
         BufferedOutputStream output;
         int[][] board = new int[8][8];
+
+        Jeu jeu = new Jeu();
 
         try {
             MyClient = new Socket("localhost", 8888);
@@ -29,24 +31,30 @@ class Client {
                     //System.out.println("size " + size);
                     input.read(aBuffer,0,size);
                     String s = new String(aBuffer).trim();
+
                     System.out.println(s);
                     String[] boardValues;
                     boardValues = s.split(" ");
                     int x=0,y=0;
                     for(int i=0; i<boardValues.length;i++){
-                        board[x][y] = Integer.parseInt(boardValues[i]);
+                        board[y][x] = Integer.parseInt(boardValues[i]);
                         x++;
                         if(x == 8){
                             x = 0;
                             y++;
                         }
                     }
+                    jeu = new Jeu(board, true);
 
                     System.out.println("Nouvelle partie! Vous jouer blanc, entrez votre premier coup : ");
-                    String move = null;
-                    move = console.readLine();
-                    output.write(move.getBytes(),0,move.length());
+                    Noeud racine = new Noeud(jeu.getPlateau(), 0, jeu.getPionsRouges(), jeu.getPionsNoirs());
+                    Minmax minmax = new Minmax(racine);
+                    String nextMove = minmax.findPositionChange(jeu, racine, PROFONDEUR, jeu.getMaCouleur());
+                    System.out.println("Mon coup : " + nextMove);
+
+                    output.write(nextMove.getBytes(),0,nextMove.length());
                     output.flush();
+                    //jeu.modifierPlateau(nextMove, jeu.getMaCouleur());
                 }
                 // Debut de la partie en joueur Noir
                 if(cmd == '2'){
@@ -57,18 +65,21 @@ class Client {
                     //System.out.println("size " + size);
                     input.read(aBuffer,0,size);
                     String s = new String(aBuffer).trim();
+
                     System.out.println(s);
                     String[] boardValues;
                     boardValues = s.split(" ");
                     int x=0,y=0;
                     for(int i=0; i<boardValues.length;i++){
-                        board[x][y] = Integer.parseInt(boardValues[i]);
+                        board[y][x] = Integer.parseInt(boardValues[i]);
                         x++;
                         if(x == 8){
                             x = 0;
                             y++;
                         }
                     }
+                    jeu = new Jeu(board, false);
+                    //jeu.afficherPlateau(jeu.getPlateau());
                 }
 
                 // Le serveur demande le prochain coup
@@ -79,22 +90,31 @@ class Client {
                     int size = input.available();
                     System.out.println("size :" + size);
                     input.read(aBuffer,0,size);
-
                     String s = new String(aBuffer);
                     System.out.println("Dernier coup :"+ s);
-                    //System.out.println("Entrez votre coup : ");
-                    String move = "D7 - C6";
-                    //move = console.readLine();
-                    output.write(move.getBytes(),0,move.length());
+                    String str = s.substring(1);
+                    jeu.modifierPlateau(str, jeu.getCouleurAdverse());
+                    System.out.println("Entrez votre coup : ");
+
+
+                    Noeud racine = new Noeud(jeu.getPlateau(), 0, jeu.getPionsRouges(), jeu.getPionsNoirs());
+                    Minmax minmax = new Minmax(racine);
+                    String nextMove = minmax.findPositionChange(jeu, racine,PROFONDEUR,jeu.getMaCouleur());
+                    System.out.println("Mon coup : " + nextMove);
+
+                    output.write(nextMove.getBytes(),0,nextMove.length());
                     output.flush();
+                    //jeu.modifierPlateau(nextMove, jeu.getMaCouleur());
 
                 }
                 // Le dernier coup est invalide
                 if(cmd == '4'){
                     System.out.println("Coup invalide, entrez un nouveau coup : ");
-                    String move = null;
-                    move = console.readLine();
-                    output.write(move.getBytes(),0,move.length());
+                    Noeud racine = new Noeud(jeu.getPlateau(), 0, jeu.getPionsRouges(), jeu.getPionsNoirs());
+                    Minmax minmax = new Minmax(racine);
+                    String nextMove = minmax.findPositionChange(jeu, racine,PROFONDEUR,jeu.getMaCouleur());
+                    System.out.println("Mon coup : " + nextMove);
+                    output.write(nextMove.getBytes(),0,nextMove.length());
                     output.flush();
 
                 }
@@ -109,7 +129,6 @@ class Client {
                     move = console.readLine();
                     output.write(move.getBytes(),0,move.length());
                     output.flush();
-
                 }
             }
         }
@@ -118,7 +137,5 @@ class Client {
         }
 
     }
-
-
 
 }
