@@ -2,14 +2,10 @@ import java.awt.*;
 
 public class Pion {
 
-    //private static final int NOIR = 2;
-    //private static final int ROUGE = 4;
-
     private int couleur;
     private int direction;
     private Point position;
 
-    public Pion (){};
     public Pion (int couleur, Point position, int direction) {
         this.couleur = couleur;
         this.position = position;

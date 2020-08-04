@@ -3,17 +3,15 @@ import java.util.*;
 
 public class Minmax {
 
-    private Arbre tree;
+    private Noeud racine;
 
     public Minmax(Noeud root){
-        tree = new Arbre();
-        tree.setRacine(root);
+        this.racine = root;
     }
     public Noeud minimax(Jeu jeu, Noeud noeud, int profondeur, int alpha, int beta, int joueur) {
-
-        int[][] plateau = jeu.copierTableau(noeud.getPlateau());
-        ArrayList<Pion> pionsIn = jeu.cloneMap(joueur == 4 ? noeud.getPionsRouges() : noeud.getPionsNoirs());
-        ArrayList<Pion> pionsOut = jeu.cloneMap(joueur == 4 ? noeud.getPionsNoirs() : noeud.getPionsRouges());
+        int[][] plateau = noeud.getPlateau();
+        ArrayList<Pion> pionsIn = new ArrayList<>(joueur == 4 ? noeud.getPionsRouges() : noeud.getPionsNoirs());
+        ArrayList<Pion> pionsOut = new ArrayList<>(joueur == 4 ? noeud.getPionsNoirs() : noeud.getPionsRouges());;
 
         ArrayList<String> deplacements = new ArrayList<String>();
 
@@ -27,11 +25,6 @@ public class Minmax {
         if (profondeur == 0) {
             int valeur = jeu.getValue(noeudEnfant.getPlateau());
             noeud.setScore(valeur);
-//            Random r = new Random();
-//            int low = 0;
-//            int high = 100;
-//            int result = r.nextInt(high-low) + low;
-//            noeud.setScore(result);
             return noeud;
         }
 
@@ -39,9 +32,6 @@ public class Minmax {
             Point position = pion.getPosition();
             deplacements.addAll(jeu.generateurMouvement(plateau, position, pion.getDirection(), joueur));
         }
-
-            //System.out.println(jeu.checkCases(noeud.getCases()));
-
 
         if (joueur == 4) {
             maxEval = -1000000000;
@@ -55,8 +45,8 @@ public class Minmax {
                         Character.getNumericValue(deplacement.charAt(3)));
 
                 int[][] plateauEnfant = jeu.copierTableau(plateau);
-                ArrayList<Pion> pionsInEnfant = jeu.cloneMap(pionsIn);
-                ArrayList<Pion> pionsOutEnfant = jeu.cloneMap(pionsOut);
+                ArrayList<Pion> pionsInEnfant = jeu.cloneListe(pionsIn);
+                ArrayList<Pion> pionsOutEnfant = jeu.cloneListe(pionsOut);
 
                 for(Pion pion : pionsInEnfant) {
                     if(pion.getPosition().equals(positionDepart)) {
@@ -75,7 +65,6 @@ public class Minmax {
                 }
                 plateauEnfant[nouvellePosition.x][nouvellePosition.y] = joueur;
                 plateauEnfant[positionDepart.x][positionDepart.y] = 0;
-                //System.out.println(positionDepart + "-" + nouvellePosition);
 
                 noeudEnfant = new Noeud(plateauEnfant, maxEval, pionsInEnfant, pionsOutEnfant);
                 Noeud noeudMax = minimax(jeu, noeudEnfant, profondeur - 1, alpha, beta, 2);
@@ -98,7 +87,7 @@ public class Minmax {
             minEval = 1000000000;
 
             Noeud temp = new Noeud(plateau, noeud.getScore(), pionsOut, pionsIn);
-
+            Collections.reverse(deplacements);
             for(String deplacement : deplacements) {
 
                 Point positionDepart = new Point(Character.getNumericValue(deplacement.charAt(0)),
@@ -108,8 +97,8 @@ public class Minmax {
                         Character.getNumericValue(deplacement.charAt(3)));
 
                 int[][] plateauEnfant = jeu.copierTableau(plateau);
-                ArrayList<Pion> pionsInEnfant = jeu.cloneMap(pionsIn);
-                ArrayList<Pion> pionsOutEnfant = jeu.cloneMap(pionsOut);
+                ArrayList<Pion> pionsInEnfant = jeu.cloneListe(pionsIn);
+                ArrayList<Pion> pionsOutEnfant = jeu.cloneListe(pionsOut);
 
                 for(Pion pion : pionsInEnfant) {
                     if(pion.getPosition().equals(positionDepart)) {
@@ -128,7 +117,6 @@ public class Minmax {
                 }
                 plateauEnfant[nouvellePosition.x][nouvellePosition.y] = joueur;
                 plateauEnfant[positionDepart.x][positionDepart.y] = 0;
-                //System.out.println(positionDepart + "-" + nouvellePosition);
 
                 noeudEnfant = new Noeud(plateauEnfant, minEval, pionsOutEnfant, pionsInEnfant);
                 Noeud noeudMin = minimax(jeu, noeudEnfant, profondeur - 1, alpha, beta, 4);
@@ -168,7 +156,7 @@ public class Minmax {
             if(nouveau && ancien){
                 break;
             }
-            for(int j = 0; j < currentMoveBoard[i].length; j++){
+            for(int j = 0; j < currentMoveBoard.length; j++){
                 if(nouveau && ancien){
                     break;
                 }

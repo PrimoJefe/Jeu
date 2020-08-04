@@ -1,8 +1,5 @@
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
 
 public class Jeu implements Cloneable{
 
@@ -20,9 +17,6 @@ public class Jeu implements Cloneable{
     private int directionRouge = 0;
     private int directionNoir = 0;
 
-
-    //private HashMap<Point, Case> cases;
-    //private HashMap<Point, Case> copie;
     private int [][] plateau;
     private int maCouleur;
     private int couleurAdverse;
@@ -66,19 +60,15 @@ public class Jeu implements Cloneable{
     }
     public int getMaCouleur() { return this.maCouleur; }
     public int getCouleurAdverse() { return this.couleurAdverse; }
-
     public ArrayList<Pion> getPionsRouges() {
         return pionsRouges;
     }
-
     public ArrayList<Pion> getPionsNoirs() {
         return pionsNoirs;
     }
-
     public void setPlateau(int[][] plateau) {
         this.plateau = plateau;
     }
-
     public void setPionsRouges(ArrayList<Pion> pionsRouges) {
         this.pionsRouges = pionsRouges;
     }
@@ -356,17 +346,8 @@ public class Jeu implements Cloneable{
         return value;
     }
 
-    public ArrayList<Pion> cloneListe(ArrayList<Pion> pions){
-        ArrayList<Pion> clone = new ArrayList<Pion>();
-        for(Pion pion : pions) {
-            clone.add(new Pion(pion.getCouleur(), pion.getPosition(), pion.getDirection()));
-        }
-        return clone;
-    }
-
-    public ArrayList<Pion> cloneMap(ArrayList<Pion> pions){
+    public ArrayList<Pion> cloneListe (ArrayList<Pion> pions){
         ArrayList<Pion> clone = new ArrayList<>();
-        boolean trouve = false;
 
         for(Pion pion : pions) {
             clone.add(new Pion(pion.getCouleur(), new Point(pion.getPosition().x, pion.getPosition().y), pion.getDirection()));
@@ -428,7 +409,7 @@ public class Jeu implements Cloneable{
                     break;
                 }
             }
-            if(this.plateau[arrivee.x][arrivee.y] == 4){
+            if(this.plateau[arrivee.x][arrivee.y] == 2){
                 Pion pionNoir = null;
                 for(Pion pion : this.pionsNoirs) {
                     if(pion.getPosition().equals(arrivee)) {
