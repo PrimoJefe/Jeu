@@ -7,6 +7,9 @@ public class Noeud {
     private ArrayList<Pion> pionsRouges;
     private ArrayList<Pion> pionsNoirs;
 
+    /*
+     * CONSTRUCTEUR
+     */
     public Noeud(int[][] plateau, int score, ArrayList<Pion> pionsRouges, ArrayList<Pion> pionsNoirs) {
         this.plateau = plateau;
         this.score = score;
@@ -14,6 +17,9 @@ public class Noeud {
         this.pionsNoirs = new ArrayList<Pion>(pionsNoirs);
     }
 
+    /*
+     * GETTERS
+     */
     public int[][] getPlateau(){
         return this.plateau;
     }
@@ -22,15 +28,18 @@ public class Noeud {
         return this.score;
     }
 
-    public void setScore(int score) {
-        this.score = score;
-    }
-
     public ArrayList<Pion> getPionsRouges() {
         return pionsRouges;
     }
 
     public ArrayList<Pion> getPionsNoirs() {
         return pionsNoirs;
+    }
+
+    /*
+     * SETTERS
+     */
+    public void setScore(int score) {
+        this.score = score;
     }
 }

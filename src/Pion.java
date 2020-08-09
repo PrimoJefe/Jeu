@@ -6,12 +6,18 @@ public class Pion {
     private int direction;
     private Point position;
 
+    /*
+     * CONSTRUCTEUR
+     */
     public Pion (int couleur, Point position, int direction) {
         this.couleur = couleur;
         this.position = position;
         this.direction = direction;
     }
 
+    /*
+     * GETTERS
+     */
     public int getCouleur() {
         return this.couleur;
     }
@@ -21,11 +27,13 @@ public class Pion {
     }
 
     public int getDirection() {
-        return this.direction = direction;
+        return this.direction;
     }
 
+    /*
+     * SETTERS
+     */
     public void setPosition(Point position) {
         this.position = position;
     }
-
 }

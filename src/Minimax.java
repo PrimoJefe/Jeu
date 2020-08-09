@@ -1,13 +1,20 @@
 import java.awt.*;
 import java.util.*;
 
-public class Minmax {
+public class Minimax {
 
     private Noeud racine;
 
-    public Minmax(Noeud root){
+    /*
+     * CONSTRUCTEUR
+     */
+    public Minimax(Noeud root){
         this.racine = root;
     }
+
+    /*
+     * METHODES
+     */
     public Noeud minimax(Jeu jeu, Noeud noeud, int profondeur, int alpha, int beta, int joueur) {
         int[][] plateau = noeud.getPlateau();
         ArrayList<Pion> pionsIn = new ArrayList<>(joueur == 4 ? noeud.getPionsRouges() : noeud.getPionsNoirs());
@@ -15,16 +22,14 @@ public class Minmax {
 
         ArrayList<String> deplacements = new ArrayList<String>();
 
-
         int eval;
         int minEval;
         int maxEval;
 
         Noeud noeudEnfant = new Noeud(plateau, noeud.getScore(), pionsIn, pionsOut);
-        int i = 0;
 
         if (profondeur == 0) {
-            int valeur = jeu.getValue(noeudEnfant.getPlateau());
+            int valeur = jeu.evaluerPlateau(noeudEnfant.getPlateau());
             noeud.setScore(valeur);
             return noeud;
         }
@@ -47,8 +52,8 @@ public class Minmax {
                         Character.getNumericValue(deplacement.charAt(3)));
 
                 int[][] plateauEnfant = jeu.copierTableau(plateau);
-                ArrayList<Pion> pionsInEnfant = jeu.cloneListe(pionsIn);
-                ArrayList<Pion> pionsOutEnfant = jeu.cloneListe(pionsOut);
+                ArrayList<Pion> pionsInEnfant = jeu.clonerListe(pionsIn);
+                ArrayList<Pion> pionsOutEnfant = jeu.clonerListe(pionsOut);
 
                 for(Pion pion : pionsInEnfant) {
                     if(pion.getPosition().equals(positionDepart)) {
@@ -108,8 +113,8 @@ public class Minmax {
                         Character.getNumericValue(deplacement.charAt(3)));
 
                 int[][] plateauEnfant = jeu.copierTableau(plateau);
-                ArrayList<Pion> pionsInEnfant = jeu.cloneListe(pionsIn);
-                ArrayList<Pion> pionsOutEnfant = jeu.cloneListe(pionsOut);
+                ArrayList<Pion> pionsInEnfant = jeu.clonerListe(pionsIn);
+                ArrayList<Pion> pionsOutEnfant = jeu.clonerListe(pionsOut);
 
                 for(Pion pion : pionsInEnfant) {
                     if(pion.getPosition().equals(positionDepart)) {
@@ -156,53 +161,52 @@ public class Minmax {
 
     }
 
-    public String findPositionChange(Jeu jeu, Noeud parentNode, int depth, int joueurMax){
-        String currentPosition = "";
-        String newPosition = "";
-        int oldX=-1,oldY=-1, newX=-1, newY=-1;
+    public String trouverDeplacement(Jeu jeu, Noeud parentNode, int depth, int joueurMax){
+        String positionCourante = "";
+        String nouvellePosition = "";
+        int ancienX = -1, ancienY = -1, nouveauX = -1, nouveauY=-1;
 
+        Noeud noeudMouvement = minimax(jeu, parentNode, depth, -1000000000, 1000000000, joueurMax);
 
-        Noeud noeudNextMove = minimax(jeu, parentNode, depth, -1000000000, 1000000000, joueurMax);
-
-        int[][] currentMoveBoard = parentNode.getPlateau();
-        int[][] nextMoveBoard = noeudNextMove.getPlateau();
+        int[][] plateauCourant = parentNode.getPlateau();
+        int[][] prochainPlateau = noeudMouvement.getPlateau();
 
         boolean nouveau = false;
         boolean ancien = false;
 
-        for(int i = 0; i < currentMoveBoard.length; i++){
+        for(int i = 0; i < plateauCourant.length; i++){
             if(nouveau && ancien){
                 break;
             }
-            for(int j = 0; j < currentMoveBoard.length; j++){
+            for(int j = 0; j < plateauCourant.length; j++){
                 if(nouveau && ancien){
                     break;
                 }
-                if(currentMoveBoard[i][j] != nextMoveBoard[i][j]) {
-                    if(nextMoveBoard[i][j] != 0) {
-                        newX = i;
-                        newY = j;
+                if(plateauCourant[i][j] != prochainPlateau[i][j]) {
+                    if(prochainPlateau[i][j] != 0) {
+                        nouveauX = i;
+                        nouveauY = j;
                         nouveau = true;
                     }
-                    else if(nextMoveBoard[i][j] == 0) {
-                        oldX = i;
-                        oldY = j;
+                    else if(prochainPlateau[i][j] == 0) {
+                        ancienX = i;
+                        ancienY = j;
                         ancien = true;
                     }
                 }
             }
         }
-        currentPosition += conversionChiffreEnLettre(oldY);
-        currentPosition += conversionChiffreEnChiffre(oldX);
+        positionCourante += conversionChiffreEnLettre(ancienY);
+        positionCourante += conversionChiffreEnChiffre(ancienX);
 
-        newPosition += conversionChiffreEnLettre(newY);
-        newPosition += conversionChiffreEnChiffre(newX);
+        nouvellePosition += conversionChiffreEnLettre(nouveauY);
+        nouvellePosition += conversionChiffreEnChiffre(nouveauX);
 
-        jeu.setPlateau(noeudNextMove.getPlateau());
-        jeu.setPionsRouges(noeudNextMove.getPionsRouges());
-        jeu.setPionsNoirs(noeudNextMove.getPionsNoirs());
+        jeu.setPlateau(noeudMouvement.getPlateau());
+        jeu.setPionsRouges(noeudMouvement.getPionsRouges());
+        jeu.setPionsNoirs(noeudMouvement.getPionsNoirs());
 
-        return currentPosition + " - " + newPosition;
+        return positionCourante + " - " + nouvellePosition;
     }
 
     public String conversionChiffreEnLettre(int chiffre) {

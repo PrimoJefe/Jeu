@@ -3,19 +3,16 @@ import java.util.ArrayList;
 
 public class Jeu implements Cloneable{
 
-    private int victoire = 500000;
-    private int presqueGagne = 10000;
-    private int valeurPiece = 1300;
-    private int pieceDanger = 10;
-    private int pieceGrandDanger = 100;
-    private int pieceValeurAttack = 50;
-    private int pieceValeurProtection = 65;
-    private int pieceConnectionH = 35;
-    private int pieceConnectionV = 15;
-    private int pieceTrouColonne = 20;
-    private int pieceMaison = 150;
-    private int directionRouge = 0;
-    private int directionNoir = 0;
+    private final int victoire = 500000;
+    private final int valeurPiece = 1300;
+    private final int pieceDanger = 10;
+    private final int pieceGrandDanger = 100;
+    private final int pieceValeurAttack = 50;
+    private final int pieceValeurProtection = 65;
+    private final int pieceConnectionH = 35;
+    private final int pieceConnectionV = 15;
+    private final int pieceTrouColonne = 20;
+    private final int pieceMaison = 150;
 
     private int [][] plateau;
     private int maCouleur;
@@ -23,6 +20,9 @@ public class Jeu implements Cloneable{
     private ArrayList<Pion> pionsRouges;
     private ArrayList<Pion> pionsNoirs;
 
+    /*
+     * CONSTRUCTEURS
+     */
     public Jeu() {};
     public Jeu(int[][] plateau, boolean maCouleur) {
         this.plateau = copierTableau(plateau);
@@ -55,45 +55,33 @@ public class Jeu implements Cloneable{
             }
         }
     }
-    public int[][] getPlateau() {
-        return this.plateau;
-    }
+
+    /*
+     * GETTERS
+     */
+    public int[][] getPlateau() { return this.plateau; }
     public int getMaCouleur() { return this.maCouleur; }
     public int getCouleurAdverse() { return this.couleurAdverse; }
-    public ArrayList<Pion> getPionsRouges() {
-        return pionsRouges;
-    }
-    public ArrayList<Pion> getPionsNoirs() {
-        return pionsNoirs;
-    }
-    public void setPlateau(int[][] plateau) {
-        this.plateau = plateau;
-    }
-    public void setPionsRouges(ArrayList<Pion> pionsRouges) {
-        this.pionsRouges = pionsRouges;
-    }
-    public void setPionsNoirs(ArrayList<Pion> pionsNoirs) {
-        this.pionsNoirs = pionsNoirs;
-    }
+    public ArrayList<Pion> getPionsRouges() { return pionsRouges; }
+    public ArrayList<Pion> getPionsNoirs() { return pionsNoirs; }
 
-    public void afficherPlateau(int[][] plateau) {
-        for(int i = 0; i < plateau.length; i++){
-            System.out.print("\n");
-            for(int j = 0; j < plateau.length; j++) {
-                System.out.print(plateau[i][j]);
-            }
-        }
-    }
+    /*
+     * SETTERS
+     */
+    public void setPlateau(int[][] plateau) { this.plateau = plateau; }
+    public void setPionsRouges(ArrayList<Pion> pionsRouges) { this.pionsRouges = pionsRouges; }
+    public void setPionsNoirs(ArrayList<Pion> pionsNoirs) { this.pionsNoirs = pionsNoirs; }
 
-    public int getValue(int[][] board){
+    /*
+     * METHODES
+     */
+    public int evaluerPlateau(int[][] board){
 
         boolean victoireNoir = false;
         boolean victoireRouge = false;
         int piecesNoir = 0;
         int piecesRouges = 0;
         int value = 0;
-        int homeValue = 0;
-        int valeurDanger = 10;
 
 
         for (int ligne= 0; ligne < 8; ligne++){
@@ -102,7 +90,7 @@ public class Jeu implements Cloneable{
                 if (board[ligne][colonne] == 4) // ROUGE MAX
                 {
                     piecesRouges++;
-                    value += getPieceValue(board,ligne, colonne,4);
+                    value += evaluerPion(board,ligne, colonne,4);
                     if(ligne == 0){victoireRouge = true;}
                     if(ligne == 7){
                         value += pieceMaison;
@@ -118,16 +106,11 @@ public class Jeu implements Cloneable{
                         if (nbPiontEnemiColonne == 0){nbColonneVide++;}
                     }
                     if (nbColonneVide>0){value+=pieceTrouColonne;}
-//                    if(ligne == 1 || ligne == 2){value += valeurDanger;}
-                    //if(y == 0){Value += HomeGroundValue;}
-//                    if {(column > 0) ThreatA = (board[GetPosition(y - 1, 7).NoPieceOnSquare);}
-//                    if (column < 7) ThreatB = (board.GetPosition(y + 1, 7).NoPieceOnSquare);
-//                    if (ThreatA && ThreatB) // almost win
-//                        board.Value += PieceAlmostWinValue;
+//
                 } else{ // NOIR MIN
                     // comme rouge
                     piecesNoir++;
-                    value += getPieceValue(board,ligne, colonne,2);
+                    value += evaluerPion(board,ligne, colonne,2);
                     if(ligne ==7){victoireNoir = true;}
                     if(ligne == 0){value -= pieceMaison;}
 //                    if(ligne == 6 || ligne == 5){value -= valeurDanger;}
@@ -144,11 +127,11 @@ public class Jeu implements Cloneable{
                 }
             }
         }
-        // if no more material available
+        // Si tous les pions d'une couleur ont ete manges
         if (piecesRouges == 0) victoireNoir = true;
         if (piecesNoir == 0) victoireRouge = true;
 
-        // winning positions
+        // position gagnante
         if (victoireNoir){
             value -= victoire;
         }
@@ -159,7 +142,9 @@ public class Jeu implements Cloneable{
         return value;
     }
 
-    public int getPieceValue(int[][] board, int row, int column, int team) {
+    // L'attribution des points pour les fonctions evaluerPlateau et evaluerPion est inspiree du code trouve au site
+    // suvant : https://www.codeproject.com/Articles/37024/Simple-AI-for-the-Game-of-Breakthrough
+    public int evaluerPion(int[][] board, int row, int column, int team) {
         int value = valeurPiece;
         int coupPossibles = 0;
         boolean vulnerable = false;
@@ -167,9 +152,6 @@ public class Jeu implements Cloneable{
         boolean connecterH = false;
         boolean connecterV = false;
         boolean gagnant = false;
-
-
-        // add connections value//
 
         if (team == 2){ //NOIR MIN
             int adversaire = 4;
@@ -214,7 +196,6 @@ public class Jeu implements Cloneable{
             }
 
             // facteur mobile
-
             if (row < 7 && column > 0){
                 if(board[row+1][column-1]!=team){coupPossibles=coupPossibles+1;}
                 if(board[row+1][column]==0){coupPossibles=coupPossibles+1;}
@@ -355,15 +336,6 @@ public class Jeu implements Cloneable{
         return value;
     }
 
-    public ArrayList<Pion> cloneListe (ArrayList<Pion> pions){
-        ArrayList<Pion> clone = new ArrayList<>();
-
-        for(Pion pion : pions) {
-            clone.add(new Pion(pion.getCouleur(), new Point(pion.getPosition().x, pion.getPosition().y), pion.getDirection()));
-        }
-        return clone;
-    }
-
     public ArrayList<String> generateurMouvement(int[][] plateau, Point position, int direction, int joueur) {
         Point depart = new Point(position.x, position.y);
         Point devant = new Point(position.x + direction, position.y);
@@ -398,6 +370,16 @@ public class Jeu implements Cloneable{
             for(int j = 0; j < plateau.length; j++) {
                 clone[i][j] = plateau[i][j];
             }
+        }
+        return clone;
+    }
+
+    public ArrayList<Pion> clonerListe(ArrayList<Pion> pions){
+        ArrayList<Pion> clone = new ArrayList<>();
+
+        for(Pion pion : pions) {
+            clone.add(new Pion(pion.getCouleur(), new Point(pion.getPosition().x, pion.getPosition().y),
+                    pion.getDirection()));
         }
         return clone;
     }
