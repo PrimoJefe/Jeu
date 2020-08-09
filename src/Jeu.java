@@ -149,8 +149,12 @@ public class Jeu implements Cloneable{
         if (piecesNoir == 0) victoireRouge = true;
 
         // winning positions
-        if (victoireNoir){value -= victoire;}
-        if (victoireRouge){value += victoire;}
+        if (victoireNoir){
+            value -= victoire;
+        }
+        if (victoireRouge){
+            value += victoire;
+        }
 
         return value;
     }
@@ -210,10 +214,13 @@ public class Jeu implements Cloneable{
             }
 
             // facteur mobile
-            if (row < 7 && column > 0 && column < 7){
-                if(board[row+1][column-1]==0){coupPossibles=coupPossibles+1;}
-                if(board[row+1][column+1]==0){coupPossibles=coupPossibles+1;}
+
+            if (row < 7 && column > 0){
+                if(board[row+1][column-1]!=team){coupPossibles=coupPossibles+1;}
                 if(board[row+1][column]==0){coupPossibles=coupPossibles+1;}
+            }
+            if (row < 7 && column < 7){
+                if(board[row+1][column+1]!=team){coupPossibles=coupPossibles+1;}
             }
 
 
@@ -221,7 +228,7 @@ public class Jeu implements Cloneable{
                 value+= victoire;
             }
             if (connecterH){value += pieceConnectionH;}
-//            if (connecterV){value += pieceConnectionV;}
+            if (connecterV){value += pieceConnectionV;}
             if (defendu){value += pieceValeurProtection;}
             if (vulnerable){value -= pieceValeurAttack;}
 
@@ -241,14 +248,13 @@ public class Jeu implements Cloneable{
             }
 
             value += coupPossibles*2;
-            value += row * pieceDanger;
+            value += row * 2;
             value = value*-1;
 
         }
 
         else { //rouge MAX
             int adversaire = 2;
-
 
             if (row ==0){gagnant = true;}
 
@@ -301,12 +307,14 @@ public class Jeu implements Cloneable{
                 }
             }
             // facteur mobile
-            if (row > 0 && column > 0 && column < 7){
-                if(board[row-1][column-1]==0){coupPossibles=coupPossibles+1;}
-                if(board[row-1][column+1]==0){coupPossibles=coupPossibles+1;}
+            if (row > 0 && column > 0){
+                if(board[row-1][column-1]!=team){coupPossibles=coupPossibles+1;}
                 if(board[row-1][column]==0){coupPossibles=coupPossibles+1;}
             }
-            value += coupPossibles*2;
+            if (row > 0 && column < 7){
+                if(board[row-1][column+1]!=team){coupPossibles=coupPossibles+1;}
+            }
+
 
             if (gagnant){
                 value+= victoire;
@@ -315,7 +323,7 @@ public class Jeu implements Cloneable{
                 value += pieceConnectionH;
             }
             if (connecterV) {
-//                value += pieceConnectionV;
+                value += pieceConnectionV;
             }
             if (defendu) {
                 value += pieceValeurProtection;
@@ -340,7 +348,8 @@ public class Jeu implements Cloneable{
                 value+=victoire;
             }
 
-            value += row * pieceDanger;
+            value += (7-row) * 2;
+            value += coupPossibles*2;
         }
 
         return value;

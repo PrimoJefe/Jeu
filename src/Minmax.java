@@ -15,6 +15,7 @@ public class Minmax {
 
         ArrayList<String> deplacements = new ArrayList<String>();
 
+
         int eval;
         int minEval;
         int maxEval;
@@ -30,6 +31,7 @@ public class Minmax {
 
         for (Pion pion : pionsIn) {
             Point position = pion.getPosition();
+
             deplacements.addAll(jeu.generateurMouvement(plateau, position, pion.getDirection(), joueur));
         }
 
@@ -66,6 +68,10 @@ public class Minmax {
                 plateauEnfant[nouvellePosition.x][nouvellePosition.y] = joueur;
                 plateauEnfant[positionDepart.x][positionDepart.y] = 0;
 
+                if (nouvellePosition.x == 0){
+                    profondeur = 1;
+                }
+
                 noeudEnfant = new Noeud(plateauEnfant, maxEval, pionsInEnfant, pionsOutEnfant);
                 Noeud noeudMax = minimax(jeu, noeudEnfant, profondeur - 1, alpha, beta, 2);
                 eval = noeudMax.getScore();
@@ -81,6 +87,11 @@ public class Minmax {
                     break;
                 }
             }
+
+            if (maxEval > 100000) {
+                maxEval = Math.floorDiv(maxEval,2);
+            }
+
             return (new Noeud(temp.getPlateau(), maxEval, temp.getPionsRouges(), temp.getPionsNoirs()));
         }
         else {
@@ -118,6 +129,10 @@ public class Minmax {
                 plateauEnfant[nouvellePosition.x][nouvellePosition.y] = joueur;
                 plateauEnfant[positionDepart.x][positionDepart.y] = 0;
 
+                if (nouvellePosition.x == 7){
+                    profondeur = 1;
+                }
+
                 noeudEnfant = new Noeud(plateauEnfant, minEval, pionsOutEnfant, pionsInEnfant);
                 Noeud noeudMin = minimax(jeu, noeudEnfant, profondeur - 1, alpha, beta, 4);
                 eval = noeudMin.getScore();
@@ -132,6 +147,9 @@ public class Minmax {
                 if (beta <= alpha) {
                     break;
                 }
+            }
+            if (minEval < -100000) {
+                minEval = Math.floorDiv(minEval, 2);
             }
             return (new Noeud(temp.getPlateau(), minEval, temp.getPionsRouges(), temp.getPionsNoirs()));
         }
